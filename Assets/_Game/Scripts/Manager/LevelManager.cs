@@ -258,7 +258,7 @@ public class LevelManager : GOSingleton<LevelManager>
             res = true;
             foreach (Ball b in ballsListToPop)
             {
-                b.PopBall(50);
+                b.PopBall(Constants.BallPopPoint);
             }
         }
         ballsListToPop.Clear();

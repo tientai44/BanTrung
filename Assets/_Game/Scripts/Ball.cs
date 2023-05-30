@@ -96,6 +96,7 @@ public class Ball : MonoBehaviour
         LevelManager.GetInstance().Map[row][col] = 0;
         BallPool.GetInstance().ReturnToPool(tagPool,gameObject);
         Constants.Point += point;
+        UIManager.GetInstance().GetUI<UIGamePlay>().SetScoreText(Constants.Point);
     }
   
     private void OnTriggerEnter2D(Collider2D collision)
@@ -121,7 +122,7 @@ public class Ball : MonoBehaviour
         }
         if (collision.CompareTag("Bottom") && state is BallState.Fall)
         {
-            PopBall(100);
+            PopBall(Constants.BallFallPoint);
         }
         if (collision.CompareTag("Ball"))
         {

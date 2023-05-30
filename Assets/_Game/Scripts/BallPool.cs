@@ -36,8 +36,7 @@ public class BallPool : GOSingleton<BallPool>
             //objectPools.Add(pool.tag, l);
         }
 
-        LevelManager.GetInstance().LoadLevel(1);
-        Shooter.GetInstance().OnInit();
+        GameController.GetInstance().ChooseLevel(1);
     }
 
     public GameObject GetFromPool(string tag)

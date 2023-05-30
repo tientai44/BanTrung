@@ -23,5 +23,10 @@ public class GameController : GOSingleton<GameController>
         target = intialPos_BallZone+ new Vector3(0,0.5f,0)*time;
         
     }
-   
+    public void ChooseLevel(int level)
+    {
+        LevelManager.GetInstance().LoadLevel(level);
+        UIManager.GetInstance().OpenUI<UIGamePlay>();
+        Shooter.GetInstance().OnInit();
+    }
 }

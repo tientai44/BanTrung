@@ -6,6 +6,9 @@ public static class Constants
 {
     // Static Data
     public static int Point=0;
+    public static int BallPopPoint = 50;
+    public static int BallFallPoint = 100;
+
     // Prefab Tag
     public static string RedBall = "RedBall";
     public static string BlueBall = "BlueBall";
