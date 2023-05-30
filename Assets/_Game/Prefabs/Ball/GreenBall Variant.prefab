@@ -15,6 +15,10 @@ PrefabInstance:
       propertyPath: color
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 792144863, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: tagPool
+      value: GreenBall
+      objectReference: {fileID: 0}
     - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Color.b
       value: 0
@@ -73,7 +77,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5294738988299029059, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Name
-      value: GreenBall
+      value: GreenBall Variant
       objectReference: {fileID: 0}
     - target: {fileID: 5802363011250736139, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_LocalPosition.x

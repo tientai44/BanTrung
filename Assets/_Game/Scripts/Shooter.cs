@@ -13,10 +13,9 @@ public class Shooter : MonoBehaviour
     private float speedShoot=300f;
     private Transform tf;
     private Vector3 offset = new Vector3 (1.5f,-0.5f,0);
-    private float ballRadius=0.4f;
+    private float ballRadius=0.25f;
     private int countBreakLine=5;
     public LineRenderer lineRenderer;
-    public LineRenderer lineRenderer2;
     public Transform TF { 
         get { 
             if (tf == null)
@@ -101,7 +100,6 @@ public class Shooter : MonoBehaviour
             if (hit.collider != null && i<countBreakLine-1)
             {
                 float angle = Vector2.Angle(direction, Vector2.up);
-                Debug.Log(angle);
                 float distanceHeight =ballRadius/Mathf.Tan(angle*Mathf.Deg2Rad);
                 Vector2 hitpoint;
                 if (direction.x > 0)

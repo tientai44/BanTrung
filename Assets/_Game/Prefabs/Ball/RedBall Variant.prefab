@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: color
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 792144863, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: tagPool
+      value: RedBall
+      objectReference: {fileID: 0}
     - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Color.b
       value: 0
@@ -69,7 +73,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5294738988299029059, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Name
-      value: RedBall
+      value: RedBall Variant
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}

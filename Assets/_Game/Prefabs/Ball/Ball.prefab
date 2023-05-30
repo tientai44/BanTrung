@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 848123211986836280}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 4988195444827558587}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 792144862}
   - component: {fileID: 792144863}
   - component: {fileID: 7659222681228531455}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Ball
   m_TagString: Ball
   m_Icon: {fileID: 0}
@@ -152,8 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a67c505bc8fa72499abe8c1f99111fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tagPool: 
   color: 3
-  rb: {fileID: 0}
+  sticker_Mask:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!58 &7659222681228531455
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -169,4 +172,4 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.4
+  m_Radius: 0.25
