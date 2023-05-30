@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shooter : MonoBehaviour
+public class Shooter : GOSingleton<Shooter>
 {
     [SerializeField] private int numBall;
     [SerializeField] private List<Ball> balls;
@@ -25,12 +25,10 @@ public class Shooter : MonoBehaviour
             return tf; 
         } 
     }
-    private void Start()
-    {
-        OnInit();
-    }
+  
     private void Update()
     {
+       
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
@@ -38,11 +36,15 @@ public class Shooter : MonoBehaviour
             Vector2 direct = touchPosition - TF.position;
             direct /= Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
             DrawVector(TF.position,direct);
-            if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            if (touch.phase == TouchPhase.Ended /*|| touch.phase == TouchPhase.Canceled*/)
             {
                 // Xử lý sự kiện thả tay ở đây
                 Shoot(direct);
             }
+        }
+        else
+        {
+            lineRenderer.enabled = false;
         }
         //if (Input.GetMouseButtonDown(0))
         //{
@@ -54,11 +56,29 @@ public class Shooter : MonoBehaviour
             
         //}
     }
-
+    Ball RandomBall()
+    {
+        int index = Random.Range(1, 4);
+        Ball ball;
+        if (index == 1)
+        {
+            ball = BallPool.GetInstance().GetFromPool(Constants.RedBall).GetComponent<Ball>();
+        }
+        else if (index == 2)
+        {
+            ball = BallPool.GetInstance().GetFromPool(Constants.GreenBall).GetComponent<Ball>();
+        }
+        else
+        {
+            ball = BallPool.GetInstance().GetFromPool(Constants.BlueBall).GetComponent<Ball>();
+        }
+        return ball;
+    }
     public void OnInit()
     {
         int index = Random.Range(0, balls.Count);
-        nextBall = Instantiate(balls[index], TF.position + offset, Quaternion.identity);
+        nextBall = RandomBall();
+        nextBall.TF.position = TF.position + offset;
         GetBall();
         lineRenderer = GetComponent<LineRenderer>();    
     }
@@ -74,7 +94,8 @@ public class Shooter : MonoBehaviour
             return;
         }
         int index = Random.Range(0, balls.Count);
-        nextBall = Instantiate(balls[index], TF.position + offset, Quaternion.identity);
+        nextBall = RandomBall();
+        nextBall.TF.position = TF.position + offset;
 
     }
     public void Shoot(Vector2 direction)
@@ -91,6 +112,7 @@ public class Shooter : MonoBehaviour
     }
     void DrawVector(Vector3 startPos,Vector3 direction)
     {
+        lineRenderer.enabled = true;
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, startPos);
         //lineRenderer.SetPosition(1, transform.position + direction * 100);

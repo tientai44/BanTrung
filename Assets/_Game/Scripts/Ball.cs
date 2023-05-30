@@ -18,7 +18,7 @@ public class Ball : MonoBehaviour
     BallState state = BallState.Idle;
     private Transform tf;
     int row, col;
-    Vector3 offset = new Vector3(-2f, 4, 5f);
+    public static Vector3 offset = new Vector3(-2f, 4, 5f);
     public LayerMask sticker_Mask;
     public Transform TF
     {
@@ -31,21 +31,40 @@ public class Ball : MonoBehaviour
             return tf;
         }
     }
-    public void SetPos(int x,int y)
+    
+    public BallState State { get => state; set => state = value; }
+    public BallColor Color { get => color; set => color = value; }
+    public int Row { get => row; set => row = value; }
+    public int Col { get => col; set => col = value; }
+
+    // Start is called before the first frame update
+    void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+       
+    }
+    private void Update()
+    {
+        //if(Input.GetKeyDown(KeyCode.J))
+        //{
+        //    rb.AddForce(new Vector2(100,100));
+        //}
+    }
+    public void SetPos(int x, int y)
     {
         row = x; col = y;
         if (LevelManager.GetInstance().Row <= x)
         {
             LevelManager.GetInstance().AddLine();
         }
-        LevelManager.GetInstance().Balls[x][y]= this;
+        LevelManager.GetInstance().Balls[x][y] = this;
         Vector3 offset1 = Vector3.zero;
         if (row % 2 == 1)
         {
             offset1 += Vector3.right / 4;
         }
-        TF.position = new Vector3(col,-row,0)/2 + offset1 + offset;
-        if(color is BallColor.Red)
+        TF.position = new Vector3(col, -row, 0) / 2 + offset1 + Ball.offset;
+        if (color is BallColor.Red)
         {
             LevelManager.GetInstance().Map[x][y] = 1;
         }
@@ -57,23 +76,7 @@ public class Ball : MonoBehaviour
         {
             LevelManager.GetInstance().Map[x][y] = 3;
         }
-    }
-    public BallState State { get => state; set => state = value; }
-    public BallColor Color { get => color; set => color = value; }
-    public int Row { get => row; set => row = value; }
-    public int Col { get => col; set => col = value; }
-
-    // Start is called before the first frame update
-    void Awake()
-    {
-        rb = GetComponent<Rigidbody2D>();
-    }
-    private void Update()
-    {
-        //if(Input.GetKeyDown(KeyCode.J))
-        //{
-        //    rb.AddForce(new Vector2(100,100));
-        //}
+        TF.SetParent(GameController.GetInstance().BallZone);
     }
     public void StopMoving()
     {
@@ -85,13 +88,14 @@ public class Ball : MonoBehaviour
         state = BallState.Moving;
         rb.AddForce(force);
     }
-    public void PopBall()
+    public void PopBall(int point)
     {
         state = BallState.Idle;
         rb.gravityScale = 0;
         LevelManager.GetInstance().Balls[row][col] = null;
         LevelManager.GetInstance().Map[row][col] = 0;
         BallPool.GetInstance().ReturnToPool(tagPool,gameObject);
+        Constants.Point += point;
     }
   
     private void OnTriggerEnter2D(Collider2D collision)
@@ -103,10 +107,21 @@ public class Ball : MonoBehaviour
         if (collision.CompareTag("Top"))
         {
             StopMoving();
+            float distance = TF.position.x - offset.x;
+            distance *= 2;
+            float gap = distance - (int) distance;
+            if (gap > 0.5f)
+            {
+                SetPos(0, (int)distance + 1);
+            }
+            else
+            {
+                SetPos(0, (int)distance);
+            }
         }
         if (collision.CompareTag("Bottom") && state is BallState.Fall)
         {
-            PopBall();
+            PopBall(100);
         }
         if (collision.CompareTag("Ball"))
         {

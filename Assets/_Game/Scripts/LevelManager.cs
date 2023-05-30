@@ -16,18 +16,20 @@ public class LevelManager : GOSingleton<LevelManager>
     Vector3 firstBallPos = new Vector3(-2f, 4, 5f);
 
     private Queue<Ball> queue = new Queue<Ball>();
+    private int rowDisplay=6;
+   
+    List<Ball> ballsListToPop = new List<Ball>();
+    List<Ball> listSaveBalls = new List<Ball>();
+    public int BallGrpCount = 1;
     public int Row { get => row; set => row = value; }
     public int Col { get => col; set => col = value; }
     public List<List<Ball>> Balls { get => balls; set => balls = value; }
     public List<List<int>> Map { get => map; set => map = value; }
     public Vector3 FirstBallPos { get => firstBallPos; set => firstBallPos = value; }
 
-    List<Ball> ballsListToPop = new List<Ball>();
-    List<Ball> listSaveBalls = new List<Ball>();
-    public int BallGrpCount = 1;
-    private void Start()
+    private void Update()
     {
-
+        
     }
 
     public void SetUp()
@@ -42,21 +44,28 @@ public class LevelManager : GOSingleton<LevelManager>
     {
         balls.Add(new List<Ball>());
         map.Add(new List<int>());
-
         row++;
         for (int i = 0; i < col; i++)
         {
             balls[row - 1].Add(null);
             map[row - 1].Add(0);
         }
+        
+    }
+    public void RemoveLine()
+    {
+        balls.RemoveAt(row-1);
+        map.RemoveAt(row-1);
+        row--;
+      
     }
     public void LoadLevel(int lv)
     {
+        Ball.offset = FirstBallPos;
         string fileName = "Map/Level" + lv.ToString();
         ReadFile(fileName);
 
         SetUp();
-
         for (int i = 0; i < row; i++)
         {
             for (int j = 0; j < col; j++)
@@ -85,29 +94,68 @@ public class LevelManager : GOSingleton<LevelManager>
                     continue;
                 }
                 balls[i][j].SetPos(i, j);
+                
             }
         }
+        ResetLine();
     }
-    public void PopBallAround(int x, int y)
+    public void ResetLine()
     {
-        BallColor color = balls[x][y].Color;
-        if (balls[x + 1][y].Color == color)
+        for(int i=row-1; i>=0; i--)
         {
-            balls[x + 1][y].PopBall();
+            bool flag = false;
+            for(int j=col-1; j>=0; j--)
+            {
+                if (map[i][j] != 0)
+                {
+                    flag = true;
+                    break;
+                }
+               
+            }
+            if (!flag)
+            {
+                RemoveLine();
+            }
+            else
+            {
+                break;
+            }
         }
-        if (balls[x - 1][y].Color == color)
+        Debug.Log("Reset");
+        if (row >= rowDisplay)
         {
-            balls[x - 1][y].PopBall();
+            Debug.Log(Ball.offset);
+            Ball.offset = firstBallPos + new Vector3(0, 0.5f, 0) * (row - rowDisplay);
+            Debug.Log(Ball.offset);
+            GameController.GetInstance().SetLine(row - rowDisplay);
         }
-        if (balls[x][y + 1].Color == color)
+        else
         {
-            balls[x][y + 1].PopBall();
-        }
-        if (balls[x][y - 1].Color == color)
-        {
-            balls[x][y - 1].PopBall();
+            Ball.offset = firstBallPos;
+            GameController.GetInstance().SetLine(0);
         }
     }
+    //public void PopBallAround(int x, int y)
+    //{
+    //    BallColor color = balls[x][y].Color;
+    //    if (balls[x + 1][y].Color == color)
+    //    {
+    //        balls[x + 1][y].PopBall();
+    //    }
+    //    if (balls[x - 1][y].Color == color)
+    //    {
+    //        balls[x - 1][y].PopBall();
+    //    }
+    //    if (balls[x][y + 1].Color == color)
+    //    {
+    //        balls[x][y + 1].PopBall();
+    //    }
+    //    if (balls[x][y - 1].Color == color)
+    //    {
+    //        balls[x][y - 1].PopBall();
+    //    }
+    //}
     public void ReadFile(string fileName)
     {
         var textFile = Resources.Load<TextAsset>(fileName);
@@ -132,6 +180,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 map[i].Add(int.Parse(temp[j]));
             }
         }
+        
     }
     public void BFS_BallAround(int posX, int posY)
     {
@@ -144,14 +193,22 @@ public class LevelManager : GOSingleton<LevelManager>
             Ball ball = queue.Dequeue();
             CheckAroundSameColor(ball.Row, ball.Col, ballsListToPop);
         }
-        PopAllBall();
-        // Kiem tra cac qua bong lo lung
-        StartCoroutine(CheckAll(1f));
+       
+         //Sau moi luot ban
+         StartCoroutine(CheckAll(1f));
+        
     }
     IEnumerator CheckAll(float time)
     {
+        bool flag =PopAllBall();
+        if (flag == true)
+        {
+            // Kiem tra cac qua bong lo lung
+            yield return new WaitForSeconds(time);
+            BFS_BallCheckAll();
+        }
         yield return new WaitForSeconds(time);
-        BFS_BallCheckAll();
+        ResetLine();
     }
     public void BFS_BallCheckAll()
     {
@@ -193,17 +250,19 @@ public class LevelManager : GOSingleton<LevelManager>
             queue.Enqueue(b);
         }
     }
-    public void PopAllBall()
+    public bool PopAllBall()
     {
+        bool res=false;
         if (ballsListToPop.Count >= 3)
         {
+            res = true;
             foreach (Ball b in ballsListToPop)
             {
-                b.PopBall();
+                b.PopBall(50);
             }
         }
         ballsListToPop.Clear();
-
+        return res;
 
 
     }

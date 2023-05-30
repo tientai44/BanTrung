@@ -37,6 +37,7 @@ public class BallPool : GOSingleton<BallPool>
         }
 
         LevelManager.GetInstance().LoadLevel(1);
+        Shooter.GetInstance().OnInit();
     }
 
     public GameObject GetFromPool(string tag)
@@ -133,6 +134,7 @@ public class BallPool : GOSingleton<BallPool>
         activeObjectPools[tag].Remove(go);
         deActiveObjectPools[tag].Add(go);
         go.SetActive(false);
+        go.transform.SetParent(null);
     }
 
     public void ClearObjectActive(string tag)
