@@ -21,20 +21,21 @@ public class LevelManager : GOSingleton<LevelManager>
     List<Ball> ballsListToPop = new List<Ball>();
     List<Ball> listSaveBalls = new List<Ball>();
     public int BallGrpCount = 1;
+    public static Dictionary<BallColor, int> numBallColor = new Dictionary<BallColor, int>();
+
     public int Row { get => row; set => row = value; }
     public int Col { get => col; set => col = value; }
     public List<List<Ball>> Balls { get => balls; set => balls = value; }
     public List<List<int>> Map { get => map; set => map = value; }
     public Vector3 FirstBallPos { get => firstBallPos; set => firstBallPos = value; }
 
-    private void Update()
-    {
-        
-    }
-
+   
     public void SetUp()
     {
-
+        numBallColor[BallColor.Red] = 0;
+        numBallColor[BallColor.Green] = 0;
+        numBallColor[BallColor.Blue] = 0;
+        balls.Clear();
         for (int i = 0; i < row; i++)
         {
             balls.Add(new List<Ball>());
@@ -75,26 +76,32 @@ public class LevelManager : GOSingleton<LevelManager>
                 {
                     pos += Vector3.right / 4;
                 }
-
+                balls[i].Add(null);
+                Ball ball =null;
                 if (map[i][j] == 1)
                 {
-                    balls[i].Add(BallPool.GetInstance().GetFromPool(Constants.RedBall, pos).GetComponent<Ball>());
-                }
+                    //balls[i].Add(BallPool.GetInstance().GetFromPool(Constants.RedBall, pos).GetComponent<Ball>());
+                    ball = BallPool.GetInstance().GetFromPool(Constants.RedBall, pos).GetComponent<Ball>();
+                    numBallColor[BallColor.Red] += 1;
+    }
                 if (map[i][j] == 2)
                 {
-                    balls[i].Add(BallPool.GetInstance().GetFromPool(Constants.GreenBall, pos).GetComponent<Ball>());
+                    //balls[i].Add(BallPool.GetInstance().GetFromPool(Constants.GreenBall, pos).GetComponent<Ball>());
+                    ball = BallPool.GetInstance().GetFromPool(Constants.GreenBall, pos).GetComponent<Ball>();
+                    numBallColor[BallColor.Green] += 1;
                 }
                 if (map[i][j] == 3)
                 {
-                    balls[i].Add(BallPool.GetInstance().GetFromPool(Constants.BlueBall, pos).GetComponent<Ball>());
+                    ball = BallPool.GetInstance().GetFromPool(Constants.BlueBall, pos).GetComponent<Ball>();
+                    numBallColor[BallColor.Blue] += 1;
                 }
                 if (map[i][j] == 0)
                 {
                     balls[i].Add(null);
                     continue;
                 }
-                balls[i][j].SetPos(i, j);
-                balls[i][j].OnInit();
+                ball.SetPos(i, j);
+                ball.OnInit();
                 
             }
         }
@@ -126,7 +133,7 @@ public class LevelManager : GOSingleton<LevelManager>
         Debug.Log("Reset");
         if (row >= rowDisplay)
         {
-            Ball.offset = firstBallPos + new Vector3(0, 0.5f, 0) * (row - rowDisplay);
+            Ball.offset = firstBallPos + new Vector3(0, Ball.BallRadius*2, 0) * (row - rowDisplay);
             GameController.GetInstance().SetLine(row - rowDisplay);
         }
         else
@@ -208,11 +215,16 @@ public class LevelManager : GOSingleton<LevelManager>
         }
         yield return new WaitForSeconds(time*2);
         ResetLine();
+
     }
     public void BFS_BallCheckAll()
     {
         Debug.Log("Check All");
         queue.Clear();
+        if (row <= 0)// Het Bong
+        {
+            return;
+        }
         for (int j = 0; j < col; j++)
         {
             if (balls[0][j] != null)

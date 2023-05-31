@@ -14,7 +14,7 @@ public class Ball : MonoBehaviour
 {
     /// Static property
     public static Vector3 offset = new Vector3(-2f, 4, 5f);
-
+    public static float BallRadius = 0.25f;
     /// 
     public string tagPool;
     [SerializeField] private BallColor color;
@@ -25,6 +25,7 @@ public class Ball : MonoBehaviour
     private float speed=5f;
     private CircleCollider2D circleCollider;
     public LayerMask sticker_Mask;
+    List<Vector2> manyPosition = new List<Vector2>();
     public Transform TF
     {
         get
@@ -36,13 +37,12 @@ public class Ball : MonoBehaviour
             return tf;
         }
     }
-    List<Vector2> destinations = new List<Vector2>();
 
     public BallState State { get => state; set => state = value; }
     public BallColor Color { get => color; set => color = value; }
     public int Row { get => row; set => row = value; }
     public int Col { get => col; set => col = value; }
-
+   
     // Start is called before the first frame update
     void Awake()
     {
@@ -61,21 +61,21 @@ public class Ball : MonoBehaviour
         //{
         //    rb.AddForce(new Vector2(100,100));
         //}
-       
-        if (destinations.Count > 0)
+        
+        if ( manyPosition.Count > 0)
         {
-            if (Vector2.Distance(TF.position, destinations[0]) < 0.25f)
+            if (Vector2.Distance(TF.position, manyPosition[0]) <= BallRadius)
             {
-                if (destinations.Count == 1)
+                if (manyPosition.Count == 1)
                 {
-                    circleCollider.radius = 0.25f;
+                    circleCollider.radius = BallRadius;
                 }
-                destinations.RemoveAt(0);
+                manyPosition.RemoveAt(0);
             }
         }
-        if(state is BallState.Moving && destinations.Count>0)
+        if(state is BallState.Moving && manyPosition.Count>0)
         {
-            TF.position = Vector2.MoveTowards(TF.position,destinations[0],speed*Time.deltaTime);
+            TF.position = Vector2.MoveTowards(TF.position,manyPosition[0],speed*Time.deltaTime);
         }
 
     }
@@ -85,6 +85,10 @@ public class Ball : MonoBehaviour
         if (LevelManager.GetInstance().Row <= x)
         {
             LevelManager.GetInstance().AddLine();
+        }
+        if (LevelManager.GetInstance().Balls[x][y]!=null)
+        {
+            return;
         }
         LevelManager.GetInstance().Balls[x][y] = this;
         Vector3 offset1 = Vector3.zero;
@@ -110,9 +114,10 @@ public class Ball : MonoBehaviour
     }
     public void StopMoving()
     {
-        destinations.Clear();
+        manyPosition.Clear();
         state = BallState.Idle;
         rb.velocity = Vector2.zero;
+        circleCollider.radius = BallRadius;
     }
     public void AddForce(Vector2 force)
     {
@@ -121,7 +126,7 @@ public class Ball : MonoBehaviour
     }
     public void Follow(List<Vector2> destinations)
     {
-        this.destinations = destinations;
+        this.manyPosition = destinations;
         state = BallState.Moving;
         circleCollider.radius = 0.01f;
     }
@@ -132,6 +137,8 @@ public class Ball : MonoBehaviour
         LevelManager.GetInstance().Balls[row][col] = null;
         LevelManager.GetInstance().Map[row][col] = 0;
         gameObject.layer = 0;
+        LevelManager.numBallColor[color] -= 1;
+
         BallPool.GetInstance().ReturnToPool(tagPool,gameObject);
 
         Constants.Point += point;
@@ -185,7 +192,7 @@ public class Ball : MonoBehaviour
                     SetPos(ball.Row + 1, ball.Col);
                 }
             }
-            else if (angle <= 100)//left-side
+            else if (angle <= 120)//left-side
             {
                 Debug.Log("Left-Side");
                 if (ball.Col > 0)// Con trong ben trai
@@ -234,7 +241,7 @@ public class Ball : MonoBehaviour
                     SetPos(ball.Row + 1, ball.Col + 1);
                 }
             }
-            else if (angle <= 100)//right-side
+            else if (angle <= 120)//right-side
             {
                 Debug.Log("Right-Side");
                 if (ball.Col < LevelManager.GetInstance().Col - 1)// Con trong ben phai
@@ -281,10 +288,14 @@ public class Ball : MonoBehaviour
                 if (gap > 0.5f)
                 {
                     SetPos(0, (int)distance + 1);
+                    //Kiem tra an duoc khong
+                    StartCoroutine(ReadyCheckAround(1f));
                 }
                 else
                 {
                     SetPos(0, (int)distance);
+                    //Kiem tra an duoc khong
+                    StartCoroutine(ReadyCheckAround(1f));
                 }
             }
         }

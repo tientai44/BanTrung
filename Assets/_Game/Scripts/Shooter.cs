@@ -17,7 +17,7 @@ public class Shooter : GOSingleton<Shooter>
     private float ballRadius=0.25f;
     private int countBreakLine=20;
     public LineRenderer lineRenderer;
-
+    
     public Transform TF { 
         get { 
             if (tf == null)
@@ -30,24 +30,37 @@ public class Shooter : GOSingleton<Shooter>
   
     private void Update()
     {
-        if(currentBall == null || GameController.GetInstance().State is GameState.Waiting)
+        if(GameController.GetInstance().State != GameState.Playing)
         {
+            lineRenderer.enabled = false;
             return;
         }
-       
+        if (currentBall == null)
+        {
+            GetBall();
+        }
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
             Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
             Vector2 direct = touchPosition - (Vector2)shootPoints[0].position;
-            direct /= Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
-            List<Vector2> destinations = DrawVector(shootPoints[0].position,direct);
-            if (touch.phase == TouchPhase.Ended /*|| touch.phase == TouchPhase.Canceled*/)
+            if (direct.y >1f)
             {
-                // Xử lý sự kiện thả tay ở đây
-                //Shoot(direct);
-                ShootUpdate(destinations);
+                direct /= Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
+                List<Vector2> destinations = DrawVector(shootPoints[0].position, direct);
+
+                if (touch.phase == TouchPhase.Ended /*|| touch.phase == TouchPhase.Canceled*/)
+                {
+                    // Xử lý sự kiện thả tay ở đây
+                    //Shoot(direct);
+                    ShootUpdate(destinations);
+                }
             }
+            else
+            {
+                lineRenderer.enabled = false;
+            }
+            
         }
         else
         {
@@ -65,7 +78,22 @@ public class Shooter : GOSingleton<Shooter>
     }
     Ball RandomBall()
     {
-        int index = Random.Range(1, 4);
+        
+        List<int> indexs = new List<int> { 1,2,3};
+        if (LevelManager.numBallColor[BallColor.Red] == 0)
+        {
+            indexs.Remove(1);
+        }
+        if (LevelManager.numBallColor[BallColor.Green] == 0)
+        {
+            indexs.Remove(2);
+        }
+        if (LevelManager.numBallColor[BallColor.Blue] == 0)
+        {
+            indexs.Remove(3);
+        }
+        
+        int index = indexs[Random.Range(0, indexs.Count)];
         Ball ball;
         if (index == 1)
         {
@@ -94,6 +122,12 @@ public class Shooter : GOSingleton<Shooter>
     {
         numBall -= 1;
         prevBall = currentBall;
+        if (LevelManager.numBallColor[nextBall.Color] == 0)
+        {
+            nextBall.OnInit();
+            BallPool.GetInstance().ReturnToPool(nextBall.tagPool, nextBall.gameObject);
+            nextBall = RandomBall();
+        }
         currentBall = nextBall;
         currentBall.TF.position = shootPoints[0].position;
         if (numBall <= 0)
@@ -126,8 +160,11 @@ public class Shooter : GOSingleton<Shooter>
         }
         if (currentBall.State is not BallState.Moving)
         {
+            LevelManager.numBallColor[currentBall.Color] += 1;
             currentBall.Follow(destinations);
-            Invoke(nameof(GetBall), 2f);
+            currentBall = null;
+            GameController.GetInstance().ChangeState(GameState.Waiting);
+            //Invoke(nameof(GetBall), 2f);
         }
     }
     List<Vector2> DrawVector(Vector3 startPos,Vector3 direction)
