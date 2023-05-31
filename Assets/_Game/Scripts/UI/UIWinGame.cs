@@ -16,6 +16,7 @@ public class UIWinGame : UICanvas
     {
         currentScore = 0;
         targetScore = score;
+        incrementRate = score/5;
     }
     public void SetLevelText(int level)
     {

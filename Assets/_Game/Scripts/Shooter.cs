@@ -124,6 +124,7 @@ public class Shooter : GOSingleton<Shooter>
     public void GetBall()
     {
         numBall -= 1;
+        UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
         prevBall = currentBall;
         if (LevelManager.numBallColor[nextBall.Color] == 0)
         {
@@ -140,7 +141,7 @@ public class Shooter : GOSingleton<Shooter>
         int index = Random.Range(0, balls.Count);
         nextBall = RandomBall();
         nextBall.TF.position = shootPoints[1].position;
-        UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
+       
     }
     public void Shoot(Vector2 direction)
     {
@@ -244,11 +245,18 @@ public class Shooter : GOSingleton<Shooter>
    
     public void ClearBall()
     {
+        StartCoroutine(IEClearBall(Time.deltaTime*20));
+    }
+
+    public IEnumerator IEClearBall(float time)
+    {
         int num = numBall;
-        //for (int i = 0; i < num; i++)
+        for (int i = 0; i < num; i++)
         {
             GetBall();
             currentBall.ThrowUp();
+            yield return new WaitForSeconds(time);
         }
+        
     }
 }

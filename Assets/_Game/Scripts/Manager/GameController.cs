@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum GameState
 {
-    Waiting,Playing,Pause,Win
+    Waiting,Playing,Pause,Win,ReadyWin
 }
 public class GameController : GOSingleton<GameController>
 {
@@ -41,6 +41,7 @@ public class GameController : GOSingleton<GameController>
         target = intialPos_BallZone+ new Vector3(0,0.5f,0)*time;
         if (LevelManager.numBallColor[BallColor.Red] + LevelManager.numBallColor[BallColor.Green]+ LevelManager.numBallColor[BallColor.Blue]==0)
         {
+            State = GameState.ReadyWin;
             StartCoroutine(IEWin());
         }
     }
@@ -74,8 +75,9 @@ public class GameController : GOSingleton<GameController>
 
     IEnumerator IEWin()
     {
-        Shooter.GetInstance().ClearBall();
-        yield return new WaitForSeconds(5f);
+        //Shooter.GetInstance().ClearBall();
+        StartCoroutine(Shooter.GetInstance().IEClearBall(Time.deltaTime * 20));
+        yield return new WaitForSeconds(2f);
         Win();
     }
 

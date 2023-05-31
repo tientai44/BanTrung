@@ -325,7 +325,7 @@ public class Ball : MonoBehaviour
     public void ThrowUp()
     {
         state = BallState.Fall;
-        AddForce(new Vector2(Random.Range(-50, 50), 200f));
+        AddForce(new Vector2(Random.Range(-100, 100), 300f));
         rb.gravityScale = 1f;
     }
 }
