@@ -16,7 +16,8 @@ public class BallPool : GOSingleton<BallPool>
     Dictionary<string, List<GameObject>> deActiveObjectPools = new Dictionary<string, List<GameObject>>();
     Dictionary<string, List<GameObject>> activeObjectPools = new Dictionary<string, List<GameObject>>();
 
-    void Start()
+  
+    public void OnInit()
     {
         GetInstance();
 
@@ -35,10 +36,7 @@ public class BallPool : GOSingleton<BallPool>
             activeObjectPools[pool.tag] = new List<GameObject>();
             //objectPools.Add(pool.tag, l);
         }
-
-        GameController.GetInstance().ChooseLevel(1);
     }
-
     public GameObject GetFromPool(string tag)
     {
         Pool tempPool = new Pool();
@@ -143,5 +141,27 @@ public class BallPool : GOSingleton<BallPool>
             ReturnToPool(tag, activeObjectPools[tag][0]);
         }
     }
-
+    IEnumerator ReturnPoolLate(string tag, GameObject go,float time)
+    {
+        yield return new WaitForSeconds(time);
+        Pool tempPool = new Pool();
+        foreach (Pool pool in poolList)
+        {
+            if (tag == pool.tag)
+            {
+                tempPool = pool;
+                break;
+            }
+        }
+        switch (tag)
+        {
+            default:
+                BasicReset(tag, go, tempPool);
+                break;
+        }
+    }
+    public void ReturnToPool(string tag, GameObject go,float time)
+    {
+        StartCoroutine(ReturnPoolLate(tag, go, time));
+    }
 }

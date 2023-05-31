@@ -13,4 +13,5 @@ public static class Constants
     public static string RedBall = "RedBall";
     public static string BlueBall = "BlueBall";
     public static string GreenBall = "GreenBall";
+    public static string CombatText_Point = "CombatText_Point";
 }

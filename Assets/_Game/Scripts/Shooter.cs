@@ -7,6 +7,7 @@ public class Shooter : GOSingleton<Shooter>
     [SerializeField] private int numBall;
     [SerializeField] private List<Ball> balls;
     [SerializeField] private LayerMask wallLayer;
+    [SerializeField] private List<Transform> shootPoints;
     public Ball currentBall;
     public Ball prevBall;
     public Ball nextBall;
@@ -14,8 +15,9 @@ public class Shooter : GOSingleton<Shooter>
     private Transform tf;
     private Vector3 offset = new Vector3 (1.5f,-0.5f,0);
     private float ballRadius=0.25f;
-    private int countBreakLine=5;
+    private int countBreakLine=20;
     public LineRenderer lineRenderer;
+
     public Transform TF { 
         get { 
             if (tf == null)
@@ -28,18 +30,23 @@ public class Shooter : GOSingleton<Shooter>
   
     private void Update()
     {
+        if(currentBall == null || GameController.GetInstance().State is GameState.Waiting)
+        {
+            return;
+        }
        
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            Vector3 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
-            Vector2 direct = touchPosition - TF.position;
+            Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
+            Vector2 direct = touchPosition - (Vector2)shootPoints[0].position;
             direct /= Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
-            DrawVector(TF.position,direct);
+            List<Vector2> destinations = DrawVector(shootPoints[0].position,direct);
             if (touch.phase == TouchPhase.Ended /*|| touch.phase == TouchPhase.Canceled*/)
             {
                 // Xử lý sự kiện thả tay ở đây
-                Shoot(direct);
+                //Shoot(direct);
+                ShootUpdate(destinations);
             }
         }
         else
@@ -72,6 +79,7 @@ public class Shooter : GOSingleton<Shooter>
         {
             ball = BallPool.GetInstance().GetFromPool(Constants.BlueBall).GetComponent<Ball>();
         }
+        ball.OnInit();
         return ball;
     }
     public void OnInit()
@@ -84,19 +92,18 @@ public class Shooter : GOSingleton<Shooter>
     }
     public void GetBall()
     {
-       
         numBall -= 1;
         prevBall = currentBall;
         currentBall = nextBall;
-        currentBall.TF.position = TF.position;
+        currentBall.TF.position = shootPoints[0].position;
         if (numBall <= 0)
         {
             return;
         }
         int index = Random.Range(0, balls.Count);
         nextBall = RandomBall();
-        nextBall.TF.position = TF.position + offset;
-
+        nextBall.TF.position = shootPoints[1].position;
+        UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
     }
     public void Shoot(Vector2 direction)
     {
@@ -110,8 +117,22 @@ public class Shooter : GOSingleton<Shooter>
             Invoke(nameof(GetBall), 2f);
         }
     }
-    void DrawVector(Vector3 startPos,Vector3 direction)
+    public void ShootUpdate(List<Vector2> destinations)
     {
+       
+        if (prevBall != null && prevBall.State is BallState.Moving)
+        {
+            return;
+        }
+        if (currentBall.State is not BallState.Moving)
+        {
+            currentBall.Follow(destinations);
+            Invoke(nameof(GetBall), 2f);
+        }
+    }
+    List<Vector2> DrawVector(Vector3 startPos,Vector3 direction)
+    {
+        List<Vector2> positions = new List<Vector2>();
         lineRenderer.enabled = true;
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, startPos);
@@ -120,32 +141,65 @@ public class Shooter : GOSingleton<Shooter>
         for( i=0;i<countBreakLine;i++) {
             RaycastHit2D hit = Physics2D.Raycast(startPos, direction, 100f, wallLayer);
             if (hit.collider != null && i<countBreakLine-1)
-            {
-                float angle = Vector2.Angle(direction, Vector2.up);
-                float distanceHeight =ballRadius/Mathf.Tan(angle*Mathf.Deg2Rad);
+            {       
                 Vector2 hitpoint;
-                if (direction.x > 0)
+                if (hit.collider.CompareTag("Wall"))
                 {
-                    hitpoint = hit.point + new Vector2(-ballRadius,-distanceHeight);
+                    float angle = Vector2.Angle(direction, Vector2.up);
+                    float distanceHeight = ballRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
+                    if (direction.x > 0)
+                    {
+                        hitpoint = hit.point + new Vector2(-ballRadius, -distanceHeight);
+                    }
+                    else
+                    {
+                        hitpoint = hit.point + new Vector2(ballRadius, -distanceHeight);
+                    }
+                    startPos = hitpoint;
+                    lineRenderer.SetPosition(lineRenderer.positionCount - 1, hitpoint);
+                    // Thực hiện thay đổi hướng tại điểm va chạm (hit.point)
+                    // Ví dụ: direction = Vector3.Reflect(direction, hit.normal);
+                    direction = new Vector3(-direction.x, direction.y, direction.z);
+                    lineRenderer.positionCount = lineRenderer.positionCount + 1;
+                    positions.Add(hitpoint);
                 }
-                else
+                else if (hit.collider.CompareTag("TopWall"))
                 {
-                    hitpoint = hit.point + new Vector2(ballRadius, -distanceHeight);
+                    float angle = Vector2.Angle(direction, Vector2.right);
+                    float distanceWidth = ballRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
+                    if (direction.x > 0)
+                    {
+                        hitpoint = hit.point + new Vector2(-distanceWidth, -ballRadius);
+                    }
+                    else
+                    {
+                        hitpoint = hit.point + new Vector2(distanceWidth, -ballRadius);
+                    }
+                    startPos = hitpoint;
+                    lineRenderer.SetPosition(lineRenderer.positionCount - 1, hitpoint);
+                    // Thực hiện thay đổi hướng tại điểm va chạm (hit.point)
+                    // Ví dụ: direction = Vector3.Reflect(direction, hit.normal);
+                    direction = new Vector3(direction.x, -direction.y, direction.z);
+                    lineRenderer.positionCount = lineRenderer.positionCount + 1;
+                    positions.Add(hitpoint);
                 }
-                startPos = hitpoint;
-                lineRenderer.SetPosition(lineRenderer.positionCount - 1, hitpoint);
-                // Thực hiện thay đổi hướng tại điểm va chạm (hit.point)
-                // Ví dụ: direction = Vector3.Reflect(direction, hit.normal);
-                direction = new Vector3(-direction.x, direction.y, direction.z);
-                lineRenderer.positionCount = lineRenderer.positionCount + 1;
+                else if (hit.collider.CompareTag("Ball")|| hit.collider.CompareTag("Top"))
+                {
+                    positions.Add(hit.point);
+                    lineRenderer.SetPosition(lineRenderer.positionCount - 1, hit.point);
+                    break;
+                }
+
+
             }
             else
             {
                 lineRenderer.SetPosition(lineRenderer.positionCount-1, transform.position + direction * 100);
+                positions.Add(transform.position + direction * 100);
                 break;
             }
         }
-       
+        return positions;
     }
     
 }

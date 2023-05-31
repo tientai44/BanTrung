@@ -12,13 +12,18 @@ public enum BallState
 }
 public class Ball : MonoBehaviour
 {
+    /// Static property
+    public static Vector3 offset = new Vector3(-2f, 4, 5f);
+
+    /// 
     public string tagPool;
     [SerializeField] private BallColor color;
     private Rigidbody2D rb;
     BallState state = BallState.Idle;
     private Transform tf;
-    int row, col;
-    public static Vector3 offset = new Vector3(-2f, 4, 5f);
+    private int row, col;
+    private float speed=5f;
+    private CircleCollider2D circleCollider;
     public LayerMask sticker_Mask;
     public Transform TF
     {
@@ -31,7 +36,8 @@ public class Ball : MonoBehaviour
             return tf;
         }
     }
-    
+    List<Vector2> destinations = new List<Vector2>();
+
     public BallState State { get => state; set => state = value; }
     public BallColor Color { get => color; set => color = value; }
     public int Row { get => row; set => row = value; }
@@ -41,7 +47,13 @@ public class Ball : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-       
+        gameObject.layer = 0;//Default Layer
+        circleCollider = GetComponent<CircleCollider2D>();
+    }
+    public void OnInit()
+    {
+        state = BallState.Idle;
+        rb.velocity = Vector2.zero;
     }
     private void Update()
     {
@@ -49,6 +61,23 @@ public class Ball : MonoBehaviour
         //{
         //    rb.AddForce(new Vector2(100,100));
         //}
+       
+        if (destinations.Count > 0)
+        {
+            if (Vector2.Distance(TF.position, destinations[0]) < 0.25f)
+            {
+                if (destinations.Count == 1)
+                {
+                    circleCollider.radius = 0.25f;
+                }
+                destinations.RemoveAt(0);
+            }
+        }
+        if(state is BallState.Moving && destinations.Count>0)
+        {
+            TF.position = Vector2.MoveTowards(TF.position,destinations[0],speed*Time.deltaTime);
+        }
+
     }
     public void SetPos(int x, int y)
     {
@@ -77,9 +106,11 @@ public class Ball : MonoBehaviour
             LevelManager.GetInstance().Map[x][y] = 3;
         }
         TF.SetParent(GameController.GetInstance().BallZone);
+        gameObject.layer = 6;//WallLayer
     }
     public void StopMoving()
     {
+        destinations.Clear();
         state = BallState.Idle;
         rb.velocity = Vector2.zero;
     }
@@ -88,51 +119,30 @@ public class Ball : MonoBehaviour
         state = BallState.Moving;
         rb.AddForce(force);
     }
+    public void Follow(List<Vector2> destinations)
+    {
+        this.destinations = destinations;
+        state = BallState.Moving;
+        circleCollider.radius = 0.01f;
+    }
     public void PopBall(int point)
     {
-        state = BallState.Idle;
+        StopMoving();
         rb.gravityScale = 0;
         LevelManager.GetInstance().Balls[row][col] = null;
         LevelManager.GetInstance().Map[row][col] = 0;
+        gameObject.layer = 0;
         BallPool.GetInstance().ReturnToPool(tagPool,gameObject);
+
         Constants.Point += point;
+        CombatText cbt = BallPool.GetInstance().GetFromPool(Constants.CombatText_Point, TF.position).GetComponent<CombatText>();
+        cbt.SetText(point.ToString());
+        BallPool.GetInstance().ReturnToPool(Constants.CombatText_Point, cbt.gameObject,0.5f);
         UIManager.GetInstance().GetUI<UIGamePlay>().SetScoreText(Constants.Point);
+
     }
   
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.CompareTag("Wall"))
-        {
-            rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
-        }
-        if (collision.CompareTag("Top"))
-        {
-            StopMoving();
-            float distance = TF.position.x - offset.x;
-            distance *= 2;
-            float gap = distance - (int) distance;
-            if (gap > 0.5f)
-            {
-                SetPos(0, (int)distance + 1);
-            }
-            else
-            {
-                SetPos(0, (int)distance);
-            }
-        }
-        if (collision.CompareTag("Bottom") && state is BallState.Fall)
-        {
-            PopBall(Constants.BallFallPoint);
-        }
-        if (collision.CompareTag("Ball"))
-        {
-            if (state is BallState.Moving)
-            {
-                Ball ball = collision.GetComponent<Ball>();
-                CheckPos(ball);
-            }
-        }
-    }
+   
     IEnumerator ReadyCheckAround(float time)
     {
         yield return new WaitForSeconds(time);
@@ -142,6 +152,8 @@ public class Ball : MonoBehaviour
     
     public void FallBall()
     {
+        //Cho roi tu nhien hon
+        rb.AddForce(new Vector2(Random.Range(-50, 50),Random.Range(0,50)));
         state = BallState.Fall;
         rb.gravityScale = 1f;
     }
@@ -249,5 +261,47 @@ public class Ball : MonoBehaviour
         StopMoving();
         //Kiem tra an duoc khong
         StartCoroutine(ReadyCheckAround(1f));
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+
+        if (collision.CompareTag("Wall"))
+        {
+            rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
+        }
+        if (collision.CompareTag("Top"))
+        {
+            if (state is not BallState.Fall)
+            {
+                StopMoving();
+                float distance = TF.position.x - offset.x;
+                distance *= 2;
+                float gap = distance - (int)distance;
+                if (gap > 0.5f)
+                {
+                    SetPos(0, (int)distance + 1);
+                }
+                else
+                {
+                    SetPos(0, (int)distance);
+                }
+            }
+        }
+
+        if (collision.CompareTag("Ball"))
+        {
+            if (state is BallState.Moving)
+            {
+                Debug.Log("Va Cham");
+                Ball ball = collision.GetComponent<Ball>();
+                CheckPos(ball);
+            }
+        }
+        if (collision.CompareTag("Bottom") && state is BallState.Fall)
+        {
+            PopBall(Constants.BallFallPoint);
+        }
+
     }
 }

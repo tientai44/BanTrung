@@ -94,6 +94,7 @@ public class LevelManager : GOSingleton<LevelManager>
                     continue;
                 }
                 balls[i][j].SetPos(i, j);
+                balls[i][j].OnInit();
                 
             }
         }
@@ -125,9 +126,7 @@ public class LevelManager : GOSingleton<LevelManager>
         Debug.Log("Reset");
         if (row >= rowDisplay)
         {
-            Debug.Log(Ball.offset);
             Ball.offset = firstBallPos + new Vector3(0, 0.5f, 0) * (row - rowDisplay);
-            Debug.Log(Ball.offset);
             GameController.GetInstance().SetLine(row - rowDisplay);
         }
         else
@@ -207,7 +206,7 @@ public class LevelManager : GOSingleton<LevelManager>
             yield return new WaitForSeconds(time);
             BFS_BallCheckAll();
         }
-        yield return new WaitForSeconds(time);
+        yield return new WaitForSeconds(time*2);
         ResetLine();
     }
     public void BFS_BallCheckAll()
