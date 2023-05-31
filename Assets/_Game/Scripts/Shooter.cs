@@ -44,7 +44,7 @@ public class Shooter : GOSingleton<Shooter>
             Touch touch = Input.GetTouch(0);
             Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
             Vector2 direct = touchPosition - (Vector2)shootPoints[0].position;
-            if (direct.y >1f)
+            if (direct.y >0.5f)
             {
                 direct /= Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
                 List<Vector2> destinations = DrawVector(shootPoints[0].position, direct);
@@ -92,7 +92,10 @@ public class Shooter : GOSingleton<Shooter>
         {
             indexs.Remove(3);
         }
-        
+        if(indexs.Count == 0)
+        {
+            indexs = new List<int> { 1, 2, 3 };
+        }
         int index = indexs[Random.Range(0, indexs.Count)];
         Ball ball;
         if (index == 1)
@@ -238,5 +241,14 @@ public class Shooter : GOSingleton<Shooter>
         }
         return positions;
     }
-    
+   
+    public void ClearBall()
+    {
+        int num = numBall;
+        //for (int i = 0; i < num; i++)
+        {
+            GetBall();
+            currentBall.ThrowUp();
+        }
+    }
 }

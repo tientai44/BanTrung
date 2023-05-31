@@ -19,10 +19,10 @@ public class Ball : MonoBehaviour
     public string tagPool;
     [SerializeField] private BallColor color;
     private Rigidbody2D rb;
-    BallState state = BallState.Idle;
+    public BallState state = BallState.Idle;
     private Transform tf;
     private int row, col;
-    private float speed=5f;
+    private float speed=10f;
     private CircleCollider2D circleCollider;
     public LayerMask sticker_Mask;
     List<Vector2> manyPosition = new List<Vector2>();
@@ -52,6 +52,7 @@ public class Ball : MonoBehaviour
     }
     public void OnInit()
     {
+        row = -1; col = -1;
         state = BallState.Idle;
         rb.velocity = Vector2.zero;
     }
@@ -121,7 +122,6 @@ public class Ball : MonoBehaviour
     }
     public void AddForce(Vector2 force)
     {
-        state = BallState.Moving;
         rb.AddForce(force);
     }
     public void Follow(List<Vector2> destinations)
@@ -134,18 +134,21 @@ public class Ball : MonoBehaviour
     {
         StopMoving();
         rb.gravityScale = 0;
-        LevelManager.GetInstance().Balls[row][col] = null;
-        LevelManager.GetInstance().Map[row][col] = 0;
+        if (row >= 0 && col >= 0)
+        {
+            LevelManager.GetInstance().Balls[row][col] = null;
+            LevelManager.GetInstance().Map[row][col] = 0;
+        }
         gameObject.layer = 0;
         LevelManager.numBallColor[color] -= 1;
 
         BallPool.GetInstance().ReturnToPool(tagPool,gameObject);
 
-        Constants.Point += point;
+        Constants.Score += point;
         CombatText cbt = BallPool.GetInstance().GetFromPool(Constants.CombatText_Point, TF.position).GetComponent<CombatText>();
         cbt.SetText(point.ToString());
         BallPool.GetInstance().ReturnToPool(Constants.CombatText_Point, cbt.gameObject,0.5f);
-        UIManager.GetInstance().GetUI<UIGamePlay>().SetScoreText(Constants.Point);
+        UIManager.GetInstance().GetUI<UIGamePlay>().SetScoreText(Constants.Score);
 
     }
   
@@ -159,7 +162,10 @@ public class Ball : MonoBehaviour
     
     public void FallBall()
     {
+        
+
         //Cho roi tu nhien hon
+
         rb.AddForce(new Vector2(Random.Range(-50, 50),Random.Range(0,50)));
         state = BallState.Fall;
         rb.gravityScale = 1f;
@@ -314,5 +320,12 @@ public class Ball : MonoBehaviour
             PopBall(Constants.BallFallPoint);
         }
 
+    }
+
+    public void ThrowUp()
+    {
+        state = BallState.Fall;
+        AddForce(new Vector2(Random.Range(-50, 50), 200f));
+        rb.gravityScale = 1f;
     }
 }

@@ -41,7 +41,7 @@ public class GameController : GOSingleton<GameController>
         target = intialPos_BallZone+ new Vector3(0,0.5f,0)*time;
         if (LevelManager.numBallColor[BallColor.Red] + LevelManager.numBallColor[BallColor.Green]+ LevelManager.numBallColor[BallColor.Blue]==0)
         {
-            Win();
+            StartCoroutine(IEWin());
         }
     }
     public void ChooseLevel(int level)
@@ -66,6 +66,17 @@ public class GameController : GOSingleton<GameController>
     }
     public void Win()
     {
+        
+        UIManager.GetInstance().GetUI<UIWinGame>().SetScoreText(Constants.Score);
+        UIManager.GetInstance().GetUI<UIWinGame>().SetLevelText(LevelManager.CurrentLevel);
         ChangeState(GameState.Win);
     }
+
+    IEnumerator IEWin()
+    {
+        Shooter.GetInstance().ClearBall();
+        yield return new WaitForSeconds(5f);
+        Win();
+    }
+
 }

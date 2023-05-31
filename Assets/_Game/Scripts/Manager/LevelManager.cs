@@ -9,7 +9,10 @@ using UnityEngine.UIElements;
 
 public class LevelManager : GOSingleton<LevelManager>
 {
-
+    //Static 
+    public static int CurrentLevel;
+    public static List<int> CheckPoints = new List<int> { 200,300,400};
+    //
     private List<List<int>> map = new List<List<int>>();
     int row, col;
     List<List<Ball>> balls = new List<List<Ball>>();
@@ -62,6 +65,8 @@ public class LevelManager : GOSingleton<LevelManager>
     }
     public void LoadLevel(int lv)
     {
+        Constants.Score = 0;
+        CurrentLevel = lv;
         Ball.offset = FirstBallPos;
         string fileName = "Map/Level" + lv.ToString();
         ReadFile(fileName);
@@ -100,8 +105,9 @@ public class LevelManager : GOSingleton<LevelManager>
                     balls[i].Add(null);
                     continue;
                 }
-                ball.SetPos(i, j);
                 ball.OnInit();
+                ball.SetPos(i, j);
+                
                 
             }
         }
@@ -211,19 +217,24 @@ public class LevelManager : GOSingleton<LevelManager>
         {
             // Kiem tra cac qua bong lo lung
             yield return new WaitForSeconds(time);
-            BFS_BallCheckAll();
+            flag = BFS_BallCheckAll();
         }
-        yield return new WaitForSeconds(time*2);
+        if (flag == false)
+        {
+            yield return new WaitForSeconds(time * 2);
+        }
+        
         ResetLine();
 
     }
-    public void BFS_BallCheckAll()
+    bool  BFS_BallCheckAll()
     {
+        bool res = false;
         Debug.Log("Check All");
         queue.Clear();
         if (row <= 0)// Het Bong
         {
-            return;
+            return res;
         }
         for (int j = 0; j < col; j++)
         {
@@ -237,7 +248,10 @@ public class LevelManager : GOSingleton<LevelManager>
             Ball ball = queue.Dequeue();
             CheckAround(ball.Row, ball.Col, listSaveBalls);
         }
-       
+        if (listSaveBalls.Count > 0)
+        {
+            res = true;
+        }
         for (int i = 0; i < row; i++)
         {
             for (int j = 0; j < col; j++)
@@ -251,7 +265,9 @@ public class LevelManager : GOSingleton<LevelManager>
                 }
             }
         }
+       
         listSaveBalls.Clear();
+        return res;
     }
     void AddToGroup(Ball b, List<Ball> listBall)
     {
