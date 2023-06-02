@@ -16,6 +16,14 @@ public class GameController : GOSingleton<GameController>
     bool isLoadDone;
     private void Awake()
     {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+        int maxScreenHeight = 1280;
+        float ratio = (float)Screen.currentResolution.width / (float)Screen.currentResolution.height;
+        if (Screen.currentResolution.height > maxScreenHeight)
+        {
+            Screen.SetResolution(Mathf.RoundToInt(ratio * (float)maxScreenHeight), maxScreenHeight, true);
+        }
         target = BallZone.position;
         intialPos_BallZone = BallZone.position;
         BallPool.GetInstance().OnInit();
