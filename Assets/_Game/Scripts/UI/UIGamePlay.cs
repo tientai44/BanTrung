@@ -30,4 +30,8 @@ public class UIGamePlay : UICanvas
     {
         Shooter.GetInstance().SwitchBall();
     }
+    public void TripleModeButton()
+    {
+        Shooter.GetInstance().EnableTripleMode();
+    }
 }

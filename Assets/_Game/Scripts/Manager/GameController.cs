@@ -20,7 +20,7 @@ public class GameController : GOSingleton<GameController>
         intialPos_BallZone = BallZone.position;
         BallPool.GetInstance().OnInit();
         SaveLoadManager.GetInstance().OnInit();
-        ChooseLevel(4);
+        ChooseLevel(3);
    
     }
    
@@ -48,7 +48,8 @@ public class GameController : GOSingleton<GameController>
         }
         else if(Shooter.GetInstance().NumBall == 0)
         {
-            StartCoroutine(IELose());
+            //StartCoroutine(IELose());
+            Lose();
         }
     }
     public void ChooseLevel(int level)
@@ -83,7 +84,7 @@ public class GameController : GOSingleton<GameController>
     IEnumerator IEWin()
     {
         //Shooter.GetInstance().ClearBall();
-        StartCoroutine(Shooter.GetInstance().IEClearBall(Time.deltaTime * 20));
+        yield return StartCoroutine(Shooter.GetInstance().IEClearBall(Time.deltaTime*10f));
         yield return new WaitForSeconds(2f);
         Win();
     }
@@ -95,7 +96,7 @@ public class GameController : GOSingleton<GameController>
     IEnumerator IELose()
     {
         //Shooter.GetInstance().ClearBall();
-        StartCoroutine(Shooter.GetInstance().IEClearBall(Time.deltaTime * 20));
+        yield return StartCoroutine(Shooter.GetInstance().IEClearBall(Time.deltaTime));
         yield return new WaitForSeconds(2f);
         Lose();
     }
