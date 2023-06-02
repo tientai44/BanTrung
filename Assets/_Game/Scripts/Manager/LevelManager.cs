@@ -1,4 +1,4 @@
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +13,14 @@ public class LevelManager : GOSingleton<LevelManager>
     public static int CurrentLevel;
     public static List<int> CheckPoints = new List<int> { 200,300,400};
     //
+    public List<LevelScriptTableObject> levelInfors;
     private List<List<int>> map = new List<List<int>>();
     int row, col;
     List<List<Ball>> balls = new List<List<Ball>>();
     Vector3 firstBallPos = new Vector3(-2f, 4, 5f);
-
+    
     private Queue<Ball> queue = new Queue<Ball>();
-    private int rowDisplay=6;
+    private int rowDisplay=12;
    
     List<Ball> ballsListToPop = new List<Ball>();
     List<Ball> listSaveBalls = new List<Ball>();
@@ -35,9 +36,7 @@ public class LevelManager : GOSingleton<LevelManager>
    
     public void SetUp()
     {
-        numBallColor[BallColor.Red] = 0;
-        numBallColor[BallColor.Green] = 0;
-        numBallColor[BallColor.Blue] = 0;
+        
         balls.Clear();
         for (int i = 0; i < row; i++)
         {
@@ -65,12 +64,24 @@ public class LevelManager : GOSingleton<LevelManager>
     }
     public void LoadLevel(int lv)
     {
+        firstBallPos = GameController.GetInstance().FirstBall.position;
+        numBallColor[BallColor.Red] = 0;
+        numBallColor[BallColor.Green] = 0;
+        numBallColor[BallColor.Blue] = 0;
+        BallPool.GetInstance().ClearObjectActive(Constants.RedBall);
+        BallPool.GetInstance().ClearObjectActive(Constants.BlueBall);
+        BallPool.GetInstance().ClearObjectActive(Constants.GreenBall);
         Constants.Score = 0;
+        balls.Clear();
+        map.Clear();
+
         CurrentLevel = lv;
         Ball.offset = FirstBallPos;
-        string fileName = "Map/Level" + lv.ToString();
+        LevelScriptTableObject levelInfor = levelInfors[lv - 1];
+        string fileName = "Map/" + levelInfor.Filename;
+        CheckPoints = levelInfor.CheckPoints;
         ReadFile(fileName);
-
+        
         SetUp();
         for (int i = 0; i < row; i++)
         {
@@ -79,7 +90,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 Vector3 pos = new Vector3(j, -i, 0) / 2 + firstBallPos;
                 if (i % 2 != 0)
                 {
-                    pos += Vector3.right / 4;
+                    pos += Vector3.right *Ball.BallRadius;
                 }
                 balls[i].Add(null);
                 Ball ball =null;
@@ -111,6 +122,9 @@ public class LevelManager : GOSingleton<LevelManager>
                 
             }
         }
+        UIManager.GetInstance().GetUI<UIGamePlay>().SetShooterPosition();
+        Shooter.GetInstance().OnInit(levelInfor.NumBall);
+
         ResetLine();
     }
     public void ResetLine()
@@ -148,26 +162,7 @@ public class LevelManager : GOSingleton<LevelManager>
             GameController.GetInstance().SetLine(0);
         }
     }
-    //public void PopBallAround(int x, int y)
-    //{
-    //    BallColor color = balls[x][y].Color;
-    //    if (balls[x + 1][y].Color == color)
-    //    {
-    //        balls[x + 1][y].PopBall();
-    //    }
-    //    if (balls[x - 1][y].Color == color)
-    //    {
-    //        balls[x - 1][y].PopBall();
-    //    }
-    //    if (balls[x][y + 1].Color == color)
-    //    {
-    //        balls[x][y + 1].PopBall();
-    //    }
-    //    if (balls[x][y - 1].Color == color)
-    //    {
-    //        balls[x][y - 1].PopBall();
-    //    }
-    //}
+   
     public void ReadFile(string fileName)
     {
         var textFile = Resources.Load<TextAsset>(fileName);
@@ -212,29 +207,39 @@ public class LevelManager : GOSingleton<LevelManager>
     }
     IEnumerator CheckAll(float time)
     {
-        bool flag =PopAllBall();
-        if (flag == true)
-        {
-            // Kiem tra cac qua bong lo lung
-            yield return new WaitForSeconds(time);
-            flag = BFS_BallCheckAll();
-        }
-        if (flag == false)
-        {
-            yield return new WaitForSeconds(time * 2);
-        }
-        
+        //bool flag =PopAllBall();
+        //if (flag == true)
+        //{
+        //    // Kiem tra cac qua bong lo lung
+        //    yield return new WaitForSeconds(time);
+        //    flag = BFS_BallCheckAll();
+        //}
+        //if (flag == true)
+        //{
+        //    yield return new WaitForSeconds(time * 2);
+        //}
+        ////Check Game
+        //ResetLine();
+
+        yield return new WaitUntil(() => PopAllBall()); // Đợi cho đến khi PopAllBall() trả về true
+
+        // Kiểm tra các quả bóng lơ lửng
+        yield return new WaitUntil(() => BFS_BallCheckAll()); // Đợi cho đến khi BFS_BallCheckAll() trả về true
+
+        yield return new WaitForSeconds(1f);
+
+        // Kiểm tra Game
         ResetLine();
+
 
     }
     bool  BFS_BallCheckAll()
     {
-        bool res = false;
         Debug.Log("Check All");
         queue.Clear();
         if (row <= 0)// Het Bong
         {
-            return res;
+            return true;
         }
         for (int j = 0; j < col; j++)
         {
@@ -248,10 +253,7 @@ public class LevelManager : GOSingleton<LevelManager>
             Ball ball = queue.Dequeue();
             CheckAround(ball.Row, ball.Col, listSaveBalls);
         }
-        if (listSaveBalls.Count > 0)
-        {
-            res = true;
-        }
+      
         for (int i = 0; i < row; i++)
         {
             for (int j = 0; j < col; j++)
@@ -267,7 +269,7 @@ public class LevelManager : GOSingleton<LevelManager>
         }
        
         listSaveBalls.Clear();
-        return res;
+        return true;
     }
     void AddToGroup(Ball b, List<Ball> listBall)
     {
@@ -279,19 +281,15 @@ public class LevelManager : GOSingleton<LevelManager>
     }
     public bool PopAllBall()
     {
-        bool res=false;
         if (ballsListToPop.Count >= 3)
         {
-            res = true;
             foreach (Ball b in ballsListToPop)
             {
                 b.PopBall(Constants.BallPopPoint);
             }
         }
         ballsListToPop.Clear();
-        return res;
-
-
+        return true;
     }
     void AddToCheckList(Ball b)
     {
@@ -560,5 +558,7 @@ public class LevelManager : GOSingleton<LevelManager>
             }
         }
     }
+
+    
 }
 

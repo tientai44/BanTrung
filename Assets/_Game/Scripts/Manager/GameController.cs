@@ -4,13 +4,14 @@ using UnityEngine;
 
 public enum GameState
 {
-    Waiting,Playing,Pause,Win,ReadyWin
+    Waiting,Playing,Pause,Win,ReadyWin,Lose
 }
 public class GameController : GOSingleton<GameController>
 {
     public GameState State;
     public Transform BallZone;
     public Vector3 target;
+    public Transform FirstBall;
     private Vector3 intialPos_BallZone;
     bool isLoadDone;
     private void Awake()
@@ -18,7 +19,8 @@ public class GameController : GOSingleton<GameController>
         target = BallZone.position;
         intialPos_BallZone = BallZone.position;
         BallPool.GetInstance().OnInit();
-        ChooseLevel(3);
+        SaveLoadManager.GetInstance().OnInit();
+        ChooseLevel(4);
    
     }
    
@@ -38,11 +40,15 @@ public class GameController : GOSingleton<GameController>
     {
         isLoadDone = false;
         State = GameState.Waiting;
-        target = intialPos_BallZone+ new Vector3(0,0.5f,0)*time;
+        target = intialPos_BallZone+ new Vector3(0,Ball.BallRadius*2,0)*time;
         if (LevelManager.numBallColor[BallColor.Red] + LevelManager.numBallColor[BallColor.Green]+ LevelManager.numBallColor[BallColor.Blue]==0)
         {
             State = GameState.ReadyWin;
             StartCoroutine(IEWin());
+        }
+        else if(Shooter.GetInstance().NumBall == 0)
+        {
+            StartCoroutine(IELose());
         }
     }
     public void ChooseLevel(int level)
@@ -50,7 +56,9 @@ public class GameController : GOSingleton<GameController>
         State = GameState.Waiting;
         LevelManager.GetInstance().LoadLevel(level);
         UIManager.GetInstance().OpenUI<UIGamePlay>();
-        Shooter.GetInstance().OnInit();
+        //UIManager.GetInstance().GetUI<UIGamePlay>().SetScoreText(Constants.Score);
+        
+        
     }
     public void ChangeState(GameState state)
     {
@@ -67,9 +75,8 @@ public class GameController : GOSingleton<GameController>
     }
     public void Win()
     {
+        UIManager.GetInstance().OpenUI<UIWinGame>();
         
-        UIManager.GetInstance().GetUI<UIWinGame>().SetScoreText(Constants.Score);
-        UIManager.GetInstance().GetUI<UIWinGame>().SetLevelText(LevelManager.CurrentLevel);
         ChangeState(GameState.Win);
     }
 
@@ -80,5 +87,16 @@ public class GameController : GOSingleton<GameController>
         yield return new WaitForSeconds(2f);
         Win();
     }
-
+    public void Lose()
+    {
+        UIManager.GetInstance().OpenUI<UILoseGame>(); 
+        ChangeState(GameState.Lose);
+    }
+    IEnumerator IELose()
+    {
+        //Shooter.GetInstance().ClearBall();
+        StartCoroutine(Shooter.GetInstance().IEClearBall(Time.deltaTime * 20));
+        yield return new WaitForSeconds(2f);
+        Lose();
+    }
 }

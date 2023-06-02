@@ -11,6 +11,10 @@ public class UIGamePlay : UICanvas
     public override void Open()
     {
         base.Open();
+        SetScoreText(Constants.Score);
+    }
+    public void SetShooterPosition()
+    {
         Vector2 shooterPoint = Camera.main.ScreenToWorldPoint(SwitchButton.transform.position);
         Shooter.GetInstance().TF.position = shooterPoint;
     }
@@ -21,5 +25,9 @@ public class UIGamePlay : UICanvas
     public void SetNumBall(int num)
     {
         numBallText.text = num.ToString();
+    }
+    public void SwitchBallButton()
+    {
+        Shooter.GetInstance().SwitchBall();
     }
 }

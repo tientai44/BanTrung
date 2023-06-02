@@ -16,8 +16,11 @@ public class Shooter : GOSingleton<Shooter>
     private Vector3 offset = new Vector3 (1.5f,-0.5f,0);
     private float ballRadius=0.25f;
     private int countBreakLine=20;
+    private bool isSwitching = false;
+    private float speedSwitching = 3f;
     public LineRenderer lineRenderer;
-    
+
+
     public Transform TF { 
         get { 
             if (tf == null)
@@ -27,10 +30,15 @@ public class Shooter : GOSingleton<Shooter>
             return tf; 
         } 
     }
-  
+
+    public int NumBall { get => numBall; set => numBall = value; }
+    private void Awake()
+    {
+        lineRenderer = GetComponent<LineRenderer>();
+    }
     private void Update()
     {
-        if(GameController.GetInstance().State != GameState.Playing)
+        if(GameController.GetInstance().State != GameState.Playing ||isSwitching)
         {
             lineRenderer.enabled = false;
             return;
@@ -113,16 +121,24 @@ public class Shooter : GOSingleton<Shooter>
         ball.OnInit();
         return ball;
     }
-    public void OnInit()
+    public void OnInit(int numball)
     {
-        int index = Random.Range(0, balls.Count);
+        currentBall = null;
+        nextBall = null;
+        this.numBall = numball;
+       
         nextBall = RandomBall();
-        nextBall.TF.position = TF.position + offset;
+        nextBall.TF.position = shootPoints[1].position;
         GetBall();
-        lineRenderer = GetComponent<LineRenderer>();    
+        
     }
-    public void GetBall()
+    public void GetBallDirectly()
     {
+        GetBall(0);
+    }
+    public void GetBall(float angle=120)
+    {
+        if(numBall == 0) { return; }
         numBall -= 1;
         UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
         prevBall = currentBall;
@@ -133,7 +149,8 @@ public class Shooter : GOSingleton<Shooter>
             nextBall = RandomBall();
         }
         currentBall = nextBall;
-        currentBall.TF.position = shootPoints[0].position;
+        //currentBall.TF.position = shootPoints[0].position;
+        StartCoroutine(IERotateBall(currentBall,angle, shootPoints[0].position));
         if (numBall <= 0)
         {
             return;
@@ -180,7 +197,7 @@ public class Shooter : GOSingleton<Shooter>
         //lineRenderer.SetPosition(1, transform.position + direction * 100);
         int i;
         for( i=0;i<countBreakLine;i++) {
-            RaycastHit2D hit = Physics2D.Raycast(startPos, direction, 100f, wallLayer);
+            RaycastHit2D hit = Physics2D.CircleCast(startPos, 0.02f, direction, 100f, wallLayer);
             if (hit.collider != null && i<countBreakLine-1)
             {       
                 Vector2 hitpoint;
@@ -253,10 +270,44 @@ public class Shooter : GOSingleton<Shooter>
         int num = numBall;
         for (int i = 0; i < num; i++)
         {
-            GetBall();
+            GetBall(0);
+            //GetBallDirectly();
             currentBall.ThrowUp();
             yield return new WaitForSeconds(time);
         }
         
     }
+
+    public void SwitchBall()
+    {
+        if(isSwitching||nextBall ==null||currentBall==null)
+        {
+            return;
+        }
+        Ball temp=currentBall;
+        currentBall = nextBall;
+        StartCoroutine(IERotateBall(currentBall, 120, shootPoints[0].position));
+        //currentBall.TF.RotateAround(TF.position,Vector3.forward,120);
+        //currentBall.TF.position = shootPoints[0].position;
+        nextBall = temp;
+        //nextBall.TF.position= shootPoints[1].position;
+        //nextBall.TF.RotateAround(TF.position, Vector3.forward, 120);
+        StartCoroutine(IERotateBall(nextBall, 240, shootPoints[1].position));
+    }
+
+    IEnumerator IERotateBall(Ball b,float angle,Vector3 target)
+    {
+        isSwitching = true;
+        float temp = 0;
+        while(temp<angle)
+        {
+            float nextAngle = angle * Time.deltaTime * speedSwitching;
+            b.TF.RotateAround(TF.position, Vector3.forward, nextAngle);
+            temp += nextAngle;
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+        b.TF.position = target;
+        isSwitching=false;
+    }
+    
 }

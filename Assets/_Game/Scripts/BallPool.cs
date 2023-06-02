@@ -138,6 +138,7 @@ public class BallPool : GOSingleton<BallPool>
     {
         while (activeObjectPools[tag].Count > 0)
         {
+            Debug.Log("1");
             ReturnToPool(tag, activeObjectPools[tag][0]);
         }
     }

@@ -11,17 +11,14 @@ public class UIWinGame : UICanvas
     float targetScore;
     float currentScore;
     float incrementRate = 100; // Tốc độ tăng giá trị
-    
-    public void SetScoreText(int score)
+
+    public override void Open()
     {
-        currentScore = 0;
-        targetScore = score;
-        incrementRate = score/5;
+        base.Open();
+        SetLevelText(LevelManager.CurrentLevel);
+        SetScoreText(Constants.Score);
     }
-    public void SetLevelText(int level)
-    {
-        levelText.text = level.ToString();
-    }
+
     private void Update()
     {
         // Nếu giá trị hiện tại chưa đạt giá trị cuối cùng
@@ -46,6 +43,37 @@ public class UIWinGame : UICanvas
       
         scoreText.text = ((int)currentScore).ToString();
 
+    }
 
+    public void SetScoreText(int score)
+    {
+        currentScore = 0;
+        targetScore = score;
+        incrementRate = score / 5;
+    }
+    public void SetLevelText(int level)
+    {
+        levelText.text = level.ToString();
+    }
+
+    public void ContinueButton()
+    {
+        GameController.GetInstance().ChooseLevel(LevelManager.CurrentLevel+1);
+        Close(0f);
+    }
+    public void ReplayButton()
+    {
+        GameController.GetInstance().ChooseLevel(LevelManager.CurrentLevel);
+        Close(0f);
+    }
+    public override void CloseDirectly()
+    {
+        for (int i = 0; i < stars.Count; i++)
+        {
+   
+            stars[i].PlayAnim("Disappear");
+            
+        }
+        base.CloseDirectly();
     }
 }

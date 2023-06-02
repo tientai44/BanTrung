@@ -9,7 +9,7 @@ public static class Constants
     public static int BallPopPoint = 50;
     public static int BallFallPoint = 100;
     public static int RemainBallPoint = 200;
-
+    public static string SAVE_FILE_NAME = "SaveGame.ss";
     // Prefab Tag
     public static string RedBall = "RedBall";
     public static string BlueBall = "BlueBall";
