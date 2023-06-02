@@ -12,13 +12,12 @@ public class Shooter : GOSingleton<Shooter>
     public Ball prevBall;
     public Ball secondBall;
     public Ball thirdBall;
-    private float speedShoot=300f;
     private Transform tf;
     private Vector3 offset = new Vector3 (1.5f,-0.5f,0);
     private float ballRadius=0.25f;
     private int countBreakLine=20;
     private bool isSwitching = false;
-    private float speedSwitching = 3f;
+    private float speedSwitching = 6f;
     private bool modeTripleBallActive=false;
     public LineRenderer lineRenderer;
 
@@ -47,7 +46,7 @@ public class Shooter : GOSingleton<Shooter>
         }
         if (currentBall == null)
         {
-            GetBall();
+            StartCoroutine(GetBall());
         }
         if (Input.touchCount > 0)
         {
@@ -132,22 +131,22 @@ public class Shooter : GOSingleton<Shooter>
         modeTripleBallActive = false;
         secondBall = RandomBall();
         secondBall.TF.position = shootPoints[1].position;
-        GetBall();
+        StartCoroutine(GetBall());
         UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
     }
     public void GetBallDirectly()
     {
-        GetBall(0);
+        StartCoroutine(GetBall(0));
     }
-    public void GetBall(float angle=120)
+    public IEnumerator GetBall(float angle=120)
     {
-        if(numBall == 0) { return; }
+        if(numBall == 0) { yield break; }
         if (!modeTripleBallActive)
         {
             //numBall -= 1;
             //UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
             prevBall = currentBall;
-            if (LevelManager.numBallColor[secondBall.Color] == 0)
+            if (secondBall !=null &&LevelManager.numBallColor[secondBall.Color] == 0)
             {
                 secondBall.OnInit();
                 BallPool.GetInstance().ReturnToPool(secondBall.tagPool, secondBall.gameObject);
@@ -156,11 +155,11 @@ public class Shooter : GOSingleton<Shooter>
             }
             currentBall = secondBall;
             //currentBall.TF.position = shootPoints[0].position;
-            StartCoroutine(IERotateBall(currentBall, angle, shootPoints[0].position));
+            yield return StartCoroutine(IERotateBall(currentBall, angle, shootPoints[0].position));
             if (numBall <= 1)
             {
                 secondBall = null;
-                return;
+                yield break;
             }
             secondBall = RandomBall();
             secondBall.TF.position = shootPoints[1].position;
@@ -170,14 +169,14 @@ public class Shooter : GOSingleton<Shooter>
             //numBall -= 1;
             //UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
             prevBall = currentBall;
-            if (LevelManager.numBallColor[secondBall.Color] == 0)
+            if (secondBall != null && LevelManager.numBallColor[secondBall.Color] == 0)
             {
                 secondBall.OnInit();
                 BallPool.GetInstance().ReturnToPool(secondBall.tagPool, secondBall.gameObject);
                 secondBall = RandomBall();
                 secondBall.TF.position = shootPoints[1].position;
             }
-            if (LevelManager.numBallColor[thirdBall.Color] == 0)
+            if (thirdBall!=null && LevelManager.numBallColor[thirdBall.Color] == 0)
             {
                 thirdBall.OnInit();
                 BallPool.GetInstance().ReturnToPool(thirdBall.tagPool, thirdBall.gameObject);
@@ -190,32 +189,32 @@ public class Shooter : GOSingleton<Shooter>
             if(numBall <= 1)
             {
                 secondBall = null;
-                return;
+                yield break;
             }
             secondBall = thirdBall;
-            StartCoroutine(IERotateBall(secondBall, angle, shootPoints[1].position));
+            yield return StartCoroutine(IERotateBall(secondBall, angle, shootPoints[1].position));
             if (numBall <= 2)
             {
                 thirdBall = null;
-                return;
+                yield break;
             }
             thirdBall = RandomBall();
             thirdBall.TF.position = shootPoints[2].position;
         }
        
     }
-    public void Shoot(Vector2 direction)
-    {
-        if(prevBall!=null && prevBall.State is BallState.Moving)
-        {
-            return;
-        }
-        if (currentBall.State is not BallState.Moving)
-        {
-            currentBall.AddForce(direction * speedShoot);
-            Invoke(nameof(GetBall), 2f);
-        }
-    }
+    //public void Shoot(Vector2 direction)
+    //{
+    //    if(prevBall!=null && prevBall.State is BallState.Moving)
+    //    {
+    //        return;
+    //    }
+    //    if (currentBall.State is not BallState.Moving)
+    //    {
+    //        currentBall.AddForce(direction * speedShoot);
+    //        Invoke(nameof(GetBall), 2f);
+    //    }
+    //}
     public void ShootUpdate(List<Vector2> destinations)
     {
        
@@ -316,9 +315,11 @@ public class Shooter : GOSingleton<Shooter>
         int num = numBall;
         for (int i = 0; i < num; i++)
         {
-            GetBall(0);
+            yield return StartCoroutine(GetBall(0));
             //GetBallDirectly();
             currentBall.ThrowUp();
+            numBall -= 1;
+            UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
             yield return new WaitForSeconds(time);
         }
         

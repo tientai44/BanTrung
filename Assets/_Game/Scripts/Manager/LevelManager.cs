@@ -20,7 +20,7 @@ public class LevelManager : GOSingleton<LevelManager>
     Vector3 firstBallPos = new Vector3(-2f, 4, 5f);
     
     private Queue<Ball> queue = new Queue<Ball>();
-    private int rowDisplay=12;
+    private int rowDisplay=10;
    
     List<Ball> ballsListToPop = new List<Ball>();
     List<Ball> listSaveBalls = new List<Ball>();

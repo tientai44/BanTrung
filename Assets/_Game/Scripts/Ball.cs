@@ -1,6 +1,7 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public enum BallColor
 {
@@ -18,6 +19,7 @@ public class Ball : MonoBehaviour
     /// 
     public string tagPool;
     [SerializeField] private BallColor color;
+    [SerializeField] ParticleSystem effect;
     private Rigidbody2D rb;
     public BallState state = BallState.Idle;
     private Transform tf;
@@ -61,6 +63,14 @@ public class Ball : MonoBehaviour
     {
         if ( destinations.Count >0)
         {
+            Vector3 direction =  destinations[0] - (Vector2)TF.position;
+
+            // Tính toán góc quay từ vector hướng
+            float angle = Mathf.Atan2(direction.x, direction.y) * Mathf.Rad2Deg;
+
+            // Áp dụng góc quay cho trục Z của transform
+            TF.eulerAngles = new Vector3(0, 0,-angle);
+
             if (Vector2.Distance(TF.position, destinations[0]) <= BallRadius)
             {
                 if (destinations.Count == 1)
@@ -71,6 +81,7 @@ public class Ball : MonoBehaviour
             }
             if (Vector2.Distance(TF.position, destinations[0]) <= 0.001f)
             {
+                TF.position = destinations[0];
                 destinations.RemoveAt(0);
             }
         }
@@ -121,6 +132,7 @@ public class Ball : MonoBehaviour
         rb.velocity = Vector2.zero;
         //circleCollider.enabled = true;
         circleCollider.radius = BallRadius;
+        effect.Stop();
     }
     public void AddForce(Vector2 force)
     {
@@ -131,8 +143,8 @@ public class Ball : MonoBehaviour
         this.destinations = destinations;
         state = BallState.Moving;
         circleCollider.radius = 0f;
-        Debug.Log(Camera.main.ScreenToWorldPoint(Input.GetTouch(0).position));
-        Debug.Log("Shooted " + destinations.Count);
+
+        effect.Play();
         //circleCollider.enabled = false;
     }
     public void PopBall(int point)
@@ -417,9 +429,17 @@ public class Ball : MonoBehaviour
             }
             
         }
-        if (collision.CompareTag("Bottom") && state is BallState.Fall)
+        if (collision.CompareTag("Bottom"))
         {
-            PopBall(Constants.BallFallPoint);
+            if (state is BallState.Fall)
+            {
+                PopBall(Constants.BallFallPoint);
+            }
+            if(state is BallState.Moving)
+            {
+                PopBall(0);
+                GameController.GetInstance().State = GameState.Playing;
+            }
         }
 
     }
