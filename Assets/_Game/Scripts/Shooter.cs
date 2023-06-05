@@ -2,8 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ShooterMode
+{
+    Normal,FullColor,Bomb,FireMode
+}
 public class Shooter : GOSingleton<Shooter>
 {
+    private static Ball tempBall;
     [SerializeField] private int numBall;
     [SerializeField] private List<Ball> balls;
     [SerializeField] private LayerMask wallLayer;
@@ -19,6 +24,7 @@ public class Shooter : GOSingleton<Shooter>
     private bool isSwitching = false;
     private float speedSwitching = 6f;
     private bool modeTripleBallActive=false;
+    private ShooterMode mode = ShooterMode.Normal;
     public LineRenderer lineRenderer;
 
 
@@ -33,6 +39,8 @@ public class Shooter : GOSingleton<Shooter>
     }
 
     public int NumBall { get => numBall; set => numBall = value; }
+    public ShooterMode Mode { get => mode; set => mode = value; }
+
     private void Awake()
     {
         lineRenderer = GetComponent<LineRenderer>();
@@ -46,7 +54,11 @@ public class Shooter : GOSingleton<Shooter>
         }
         if (currentBall == null)
         {
-            StartCoroutine(GetBall());
+            if(mode is ShooterMode.FullColor)
+            {
+                UnEnableAnyMode();
+            }
+            else StartCoroutine(GetBall());
         }
         if (Input.touchCount > 0)
         {
@@ -379,5 +391,37 @@ public class Shooter : GOSingleton<Shooter>
         modeTripleBallActive = true;
         thirdBall = RandomBall();
         thirdBall.TF.position = shootPoints[2].position;
+    }
+    public void EnableFullColorBall()
+    {
+        if(mode is ShooterMode.FullColor)
+        {
+            return;
+        }
+        mode = ShooterMode.FullColor;
+        tempBall = currentBall;
+        currentBall.gameObject.SetActive(false);
+        secondBall.gameObject.SetActive(false);
+        if (thirdBall != null)
+        {
+            thirdBall.gameObject.SetActive(false);
+        }
+        currentBall = BallPool.GetInstance().GetFromPool(Constants.FullColorBall, shootPoints[0].position).GetComponent<Ball>();
+        currentBall.OnInit();   
+    }
+    public void UnEnableAnyMode()
+    {
+        if(mode is ShooterMode.Normal)
+        {
+            return;
+        }
+        mode = ShooterMode.Normal;
+        currentBall = tempBall; 
+        currentBall.gameObject.SetActive(true);
+        secondBall.gameObject.SetActive(true);
+        if (thirdBall != null)
+        {
+            thirdBall.gameObject.SetActive(true);
+        }
     }
 }

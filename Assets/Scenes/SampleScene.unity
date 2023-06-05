@@ -556,6 +556,10 @@ MonoBehaviour:
     poolCount: 0
     canGrow: 1
     tag: Rabbit
+  - poolObjectPrefab: {fileID: 3271938690473878119, guid: dca1450b82d48464d84b051974e81c18, type: 3}
+    poolCount: 0
+    canGrow: 1
+    tag: FullColorBall
 --- !u!4 &423979895
 Transform:
   m_ObjectHideFlags: 0

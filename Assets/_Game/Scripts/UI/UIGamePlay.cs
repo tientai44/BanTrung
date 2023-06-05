@@ -75,6 +75,10 @@ public class UIGamePlay : UICanvas
     {
         Shooter.GetInstance().EnableTripleMode();
     }
+    public void FullColorModeButton()
+    {
+        Shooter.GetInstance().EnableFullColorBall();
+    }
     public void SettingButton()
     {
         if(GameController.GetInstance().State != GameState.Playing)

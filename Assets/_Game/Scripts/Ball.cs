@@ -5,7 +5,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public enum BallColor
 {
-    Red, Green, Blue,Null,Rabbit
+    Red, Green, Blue,Null,Rabbit,FullColor,Bomb,FireBall
 }
 public enum BallState
 {
@@ -495,4 +495,14 @@ public class Ball : MonoBehaviour
             }
         }
     }
+
+    public bool IsEqualColor(Ball ball)
+    {
+        return ball.Color is BallColor.FullColor || this.Color == BallColor.FullColor || ball.Color == this.Color;
+
+
+
+    }
+
+
 }

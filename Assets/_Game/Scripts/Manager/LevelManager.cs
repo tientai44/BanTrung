@@ -70,6 +70,7 @@ public class LevelManager : GOSingleton<LevelManager>
         numBallColor[BallColor.Green] = 0;
         numBallColor[BallColor.Blue] = 0;
         numBallColor[BallColor.Rabbit] = 0;
+        numBallColor[BallColor.FullColor] = 0;
         BallPool.GetInstance().ClearObjectActive(Constants.RedBall);
         BallPool.GetInstance().ClearObjectActive(Constants.BlueBall);
         BallPool.GetInstance().ClearObjectActive(Constants.GreenBall);
@@ -314,7 +315,7 @@ public class LevelManager : GOSingleton<LevelManager>
     }
     public bool PopAllBall()
     {
-        if (ballsListToPop.Count >= 3)
+        if (ballsListToPop.Count >= 3 || Shooter.GetInstance().Mode is ShooterMode.FullColor)
         {
             foreach (Ball b in ballsListToPop)
             {
@@ -343,7 +344,7 @@ public class LevelManager : GOSingleton<LevelManager>
 
                 if (b != null)
                 {
-                    if (temp.Color == b.Color)//right-top
+                    if (temp.IsEqualColor(b))//right-top
                     {
                         AddToGroup(b, listBall);
                     }
@@ -353,7 +354,7 @@ public class LevelManager : GOSingleton<LevelManager>
                     b = balls[posX - 1][posY - 1];
                     if (b != null)
                     {
-                        if (temp.Color == b.Color)//left-top
+                        if (temp.IsEqualColor(b))//left-top
                         {
                             AddToGroup(b, listBall);
                         }
@@ -365,7 +366,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 b = balls[posX][posY - 1];
                 if (b != null)
                 {
-                    if (temp.Color == b.Color)//left-side
+                    if (temp.IsEqualColor(b))//left-side
                     {
                         AddToGroup(b, listBall);
                     }
@@ -375,7 +376,7 @@ public class LevelManager : GOSingleton<LevelManager>
                     b = balls[posX + 1][posY - 1];
                     if (b != null)
                     {
-                        if (b.Color == temp.Color)//left-bottom
+                        if (temp.IsEqualColor(b))//left-bottom
                         {
                             AddToGroup(b, listBall);
                         }
@@ -387,7 +388,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 b = balls[posX][posY + 1];
                 if (b != null)
                 {
-                    if (b.Color == temp.Color)//right-side
+                    if (temp.IsEqualColor(b))//right-side
                     {
                         AddToGroup(b, listBall);
                     }
@@ -398,7 +399,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 b = balls[posX + 1][posY];
                 if (b != null)
                 {
-                    if (b.Color == temp.Color)//right-bottom
+                    if (temp.IsEqualColor(b))//right-bottom
                     {
                         AddToGroup(b, listBall);
 
@@ -416,7 +417,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 {
                     if (b != null)
                     {
-                        if (temp.Color == b.Color)//right-top x
+                        if (temp.IsEqualColor(b))//right-top x
                         {
                             AddToGroup(b, listBall);
                         }
@@ -425,7 +426,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 b = balls[posX - 1][posY];
                 if (b != null)
                 {
-                    if (temp.Color == b.Color)//left-top x
+                    if (temp.IsEqualColor(b))//left-top x
                     {
                         AddToGroup(b, listBall);
                     }
@@ -437,7 +438,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 b = balls[posX][posY - 1];
                 if (b != null)
                 {
-                    if (temp.Color == b.Color)//left-side x
+                    if (temp.IsEqualColor(b))//left-side x
                     {
                         AddToGroup(b, listBall);
 
@@ -450,7 +451,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 b = balls[posX][posY + 1];
                 if (b != null)
                 {
-                    if (b.Color == temp.Color)//right-side x
+                    if (temp.IsEqualColor(b))//right-side x
                     {
                         AddToGroup(b, listBall);
                     }
@@ -463,7 +464,7 @@ public class LevelManager : GOSingleton<LevelManager>
                     b = balls[posX + 1][posY + 1];
                     if (b != null)
                     {
-                        if (b.Color == temp.Color)//right-bottom
+                        if (temp.IsEqualColor(b))//right-bottom
                         {
                             AddToGroup(b, listBall);
                         }
@@ -472,7 +473,7 @@ public class LevelManager : GOSingleton<LevelManager>
                 b = balls[posX + 1][posY];
                 if (balls[posX + 1][posY] != null)
                 {
-                    if (b.Color == temp.Color)//left-bottom x
+                    if (temp.IsEqualColor(b))//left-bottom x
                     {
                         AddToGroup(b, listBall);
                     }
