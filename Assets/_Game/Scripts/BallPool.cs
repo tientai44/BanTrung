@@ -35,6 +35,7 @@ public class BallPool : GOSingleton<BallPool>
             deActiveObjectPools[pool.tag] = l;
             activeObjectPools[pool.tag] = new List<GameObject>();
             //objectPools.Add(pool.tag, l);
+            Debug.Log(pool.tag);
         }
     }
     public GameObject GetFromPool(string tag)
@@ -138,7 +139,6 @@ public class BallPool : GOSingleton<BallPool>
     {
         while (activeObjectPools[tag].Count > 0)
         {
-            Debug.Log("1");
             ReturnToPool(tag, activeObjectPools[tag][0]);
         }
     }

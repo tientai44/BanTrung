@@ -53,7 +53,7 @@ public class Shooter : GOSingleton<Shooter>
             Touch touch = Input.GetTouch(0);
             Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
             Vector2 direct = touchPosition - (Vector2)shootPoints[0].position;
-            if (direct.y >0.5f)
+            if (direct.y >0.5f &&direct.y<5.8f)
             {
                 direct /= Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
                 List<Vector2> destinations = DrawVector(shootPoints[0].position, direct);

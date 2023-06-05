@@ -5,7 +5,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public enum BallColor
 {
-    Red, Green, Blue,Null
+    Red, Green, Blue,Null,Rabbit
 }
 public enum BallState
 {
@@ -369,6 +369,7 @@ public class Ball : MonoBehaviour
 
         StopMoving();
         //Kiem tra an duoc khong
+   
         StartCoroutine(ReadyCheckAround(1f));
     }
 
@@ -381,7 +382,7 @@ public class Ball : MonoBehaviour
         }
         if (collision.CompareTag("Top"))
         {
-            if (state is not BallState.Fall)
+            if (state is BallState.Moving)
             {
                 StopMoving();
                 float distance = TF.position.x - offset.x;

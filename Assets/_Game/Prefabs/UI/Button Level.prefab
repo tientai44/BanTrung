@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 9046359651874365328}
   - component: {fileID: 8766307288190860080}
   m_Layer: 5
-  m_Name: Text (Legacy)
+  m_Name: LevelText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.000015258789}
+  m_SizeDelta: {x: 0, y: -0.000030518}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &9046359651874365328
 CanvasRenderer:
@@ -92,6 +92,7 @@ GameObject:
   - component: {fileID: 3772819764325735549}
   - component: {fileID: 5155578644377900041}
   - component: {fileID: 4968236917986476912}
+  - component: {fileID: 8323540218998011268}
   m_Layer: 5
   m_Name: Button Level
   m_TagString: Untagged
@@ -202,3 +203,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8323540218998011268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6887757248484518337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df4cee5b0e92fc543bc2897e4d9d4d1f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  txtLevel: {fileID: 8766307288190860080}

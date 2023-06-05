@@ -12,6 +12,7 @@ public class LevelManager : GOSingleton<LevelManager>
     //Static 
     public static int CurrentLevel;
     public static List<int> CheckPoints = new List<int> { 200,300,400};
+    public static int  targetNum;
     //
     public List<LevelScriptTableObject> levelInfors;
     private List<List<int>> map = new List<List<int>>();
@@ -68,9 +69,11 @@ public class LevelManager : GOSingleton<LevelManager>
         numBallColor[BallColor.Red] = 0;
         numBallColor[BallColor.Green] = 0;
         numBallColor[BallColor.Blue] = 0;
+        numBallColor[BallColor.Rabbit] = 0;
         BallPool.GetInstance().ClearObjectActive(Constants.RedBall);
         BallPool.GetInstance().ClearObjectActive(Constants.BlueBall);
         BallPool.GetInstance().ClearObjectActive(Constants.GreenBall);
+        BallPool.GetInstance().ClearObjectActive(Constants.Rabbit);
         Constants.Score = 0;
         balls.Clear();
         map.Clear();
@@ -111,9 +114,14 @@ public class LevelManager : GOSingleton<LevelManager>
                     ball = BallPool.GetInstance().GetFromPool(Constants.BlueBall, pos).GetComponent<Ball>();
                     numBallColor[BallColor.Blue] += 1;
                 }
+                if (map[i][j] == 4)
+                {
+                    ball = BallPool.GetInstance().GetFromPool(Constants.Rabbit, pos).GetComponent<Ball>();
+                    numBallColor[BallColor.Rabbit] += 1;
+                }
                 if (map[i][j] == 0)
                 {
-                    balls[i].Add(null);
+                    
                     continue;
                 }
                 ball.OnInit();
@@ -122,9 +130,25 @@ public class LevelManager : GOSingleton<LevelManager>
                 
             }
         }
+        
+        if (levelInfor.LevelType is LevelType.ClearBall)
+        {
+            int sum = numBallColor[BallColor.Red] + numBallColor[BallColor.Green] + numBallColor[BallColor.Blue];
+            UIManager.GetInstance().GetUI<UIGamePlay>().SetMissionProcess(sum.ToString());
+        }
+        else if(levelInfor.LevelType is LevelType.SaveRabbit)
+        {
+            targetNum = numBallColor[BallColor.Rabbit];
+            UIManager.GetInstance().GetUI<UIGamePlay>().SetMissionProcess("0"+"/"+ targetNum.ToString());
+        }
+        else if (levelInfor.LevelType is LevelType.CollectFlower)
+        {
+            targetNum = 6;
+            UIManager.GetInstance().GetUI<UIGamePlay>().SetMissionProcess(SearchFirstRow().ToString() + "/" + targetNum.ToString());
+        }
         UIManager.GetInstance().GetUI<UIGamePlay>().SetShooterPosition();
         Shooter.GetInstance().OnInit(levelInfor.NumBall);
-
+        
         ResetLine();
     }
     public void ResetLine()
@@ -220,14 +244,24 @@ public class LevelManager : GOSingleton<LevelManager>
         //}
         ////Check Game
         //ResetLine();
-
         yield return new WaitUntil(() => PopAllBall()); // Đợi cho đến khi PopAllBall() trả về true
 
         // Kiểm tra các quả bóng lơ lửng
         yield return new WaitUntil(() => BFS_BallCheckAll()); // Đợi cho đến khi BFS_BallCheckAll() trả về true
 
         yield return new WaitForSeconds(1f);
-
+        if (levelInfors[CurrentLevel - 1].LevelType is LevelType.ClearBall)
+        {
+            int sum = numBallColor[BallColor.Red] + numBallColor[BallColor.Green] + numBallColor[BallColor.Blue];
+            UIManager.GetInstance().GetUI<UIGamePlay>().SetMissionProcess(sum.ToString());
+        }
+        else if (levelInfors[CurrentLevel - 1].LevelType is LevelType.SaveRabbit)
+        {
+            UIManager.GetInstance().GetUI<UIGamePlay>().SetMissionProcess((targetNum - numBallColor[BallColor.Rabbit]).ToString() + "/" + targetNum.ToString());
+        }else if (levelInfors[CurrentLevel - 1].LevelType is LevelType.CollectFlower)
+        {
+            UIManager.GetInstance().GetUI<UIGamePlay>().SetMissionProcess(SearchFirstRow().ToString() + "/" + targetNum.ToString());
+        }
         // Kiểm tra Game
         ResetLine();
 
@@ -235,7 +269,6 @@ public class LevelManager : GOSingleton<LevelManager>
     }
     bool  BFS_BallCheckAll()
     {
-        Debug.Log("Check All");
         queue.Clear();
         if (row <= 0)// Het Bong
         {
@@ -559,6 +592,76 @@ public class LevelManager : GOSingleton<LevelManager>
         }
     }
 
-    
+    public bool CheckWin()
+    {
+        LevelScriptTableObject levelInfor = levelInfors[CurrentLevel-1];
+       
+        if (levelInfor.LevelType is LevelType.ClearBall)
+        {
+            if(numBallColor[BallColor.Red] + numBallColor[BallColor.Green] + numBallColor[BallColor.Blue] == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (levelInfor.LevelType is LevelType.SaveRabbit)
+        {
+            if (numBallColor[BallColor.Rabbit] == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if(levelInfor.LevelType is LevelType.CollectFlower)
+        {
+            if (SearchFirstRow()==targetNum)
+            {
+                return true;
+            }
+            else { return false; }
+        }
+        return false;
+    }
+    public IEnumerator FallAllBall(float time)
+    {
+        for(int i = 0; i < row; i++)
+        {
+            for (int j = 0; j < col; j++)
+            {
+                if (balls[i][j] != null)
+                {
+                    balls[i][j].FallBall();
+                    yield return new WaitForSeconds(time);
+                }
+            }
+        }
+    }
+    public int SearchFirstRow()
+    {
+        int res = 0;
+        if(row <= 0)
+        {
+            return col;
+        }
+        else
+        {
+            for( int i = 0; i < col-1; i++)
+            {
+                Debug.Log(balls[0].Count);
+                Debug.Log(col);
+                if (balls[0][i] == null)
+                {
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
 }
 

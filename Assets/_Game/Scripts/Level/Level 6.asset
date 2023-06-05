@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7a647a187271b684cb3641c19f7f732f, type: 3}
-  m_Name: Level 3
+  m_Name: Level 6
   m_EditorClassIdentifier: 
-  Filename: Level3
-  CheckPoints: 2c01000090010000f4010000
-  NumBall: 5
-  LevelType: 1
+  Filename: Level6
+  CheckPoints: e8030000d0070000b80b0000
+  NumBall: 10
+  LevelType: 2

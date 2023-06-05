@@ -6,6 +6,8 @@ using UnityEngine.UI;
 public class UIGamePlay : UICanvas
 {
     [SerializeField] private Text scroreText;
+    [SerializeField] private Image missionImg;
+    [SerializeField] private Text MissionProcessTxt;
     [SerializeField] private Text numBallText;
     [SerializeField] private Button SwitchButton;
     [SerializeField] private Image imgFill;
@@ -72,5 +74,17 @@ public class UIGamePlay : UICanvas
     public void TripleModeButton()
     {
         Shooter.GetInstance().EnableTripleMode();
+    }
+    public void SettingButton()
+    {
+        if(GameController.GetInstance().State != GameState.Playing)
+        {
+            return;
+        }
+        UIManager.GetInstance().OpenUI<UISettingMenu>();
+    }
+    public void SetMissionProcess(string txt)
+    {
+        MissionProcessTxt.text = txt;
     }
 }

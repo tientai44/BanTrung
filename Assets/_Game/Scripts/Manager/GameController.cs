@@ -8,12 +8,12 @@ public enum GameState
 }
 public class GameController : GOSingleton<GameController>
 {
-    public GameState State;
+    public GameState State = GameState.Waiting;
     public Transform BallZone;
     public Vector3 target;
     public Transform FirstBall;
     private Vector3 intialPos_BallZone;
-    bool isLoadDone;
+    bool isLoadDone=true;
     private void Awake()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
@@ -28,7 +28,8 @@ public class GameController : GOSingleton<GameController>
         intialPos_BallZone = BallZone.position;
         BallPool.GetInstance().OnInit();
         SaveLoadManager.GetInstance().OnInit();
-        ChooseLevel(3);
+        //ChooseLevel(3);
+        UIManager.GetInstance().OpenUI<UIMainMenu>();
    
     }
    
@@ -49,7 +50,7 @@ public class GameController : GOSingleton<GameController>
         isLoadDone = false;
         State = GameState.Waiting;
         target = intialPos_BallZone+ new Vector3(0,Ball.BallRadius*2,0)*time;
-        if (LevelManager.numBallColor[BallColor.Red] + LevelManager.numBallColor[BallColor.Green]+ LevelManager.numBallColor[BallColor.Blue]==0)
+        if (LevelManager.GetInstance().CheckWin())
         {
             State = GameState.ReadyWin;
             StartCoroutine(IEWin());
@@ -63,6 +64,8 @@ public class GameController : GOSingleton<GameController>
     public void ChooseLevel(int level)
     {
         State = GameState.Waiting;
+        target = intialPos_BallZone;
+        BallZone.position = target;
         LevelManager.GetInstance().LoadLevel(level);
         UIManager.GetInstance().OpenUI<UIGamePlay>();
         //UIManager.GetInstance().GetUI<UIGamePlay>().SetScoreText(Constants.Score);
@@ -92,6 +95,7 @@ public class GameController : GOSingleton<GameController>
     IEnumerator IEWin()
     {
         //Shooter.GetInstance().ClearBall();
+        yield return StartCoroutine(LevelManager.GetInstance().FallAllBall(Time.deltaTime));
         yield return StartCoroutine(Shooter.GetInstance().IEClearBall(Time.deltaTime*10f));
         yield return new WaitForSeconds(2f);
         Win();

@@ -548,14 +548,14 @@ MonoBehaviour:
     poolCount: 0
     canGrow: 1
     tag: BlueBall
-  - poolObjectPrefab: {fileID: 1175531552021398468, guid: d23cf8dd8a8ea8f448e91224d203e26b, type: 3}
-    poolCount: 0
-    canGrow: 1
-    tag: BlueBall
   - poolObjectPrefab: {fileID: 5385127004568374081, guid: 53b3b844c582ae54e82c52e7baf3e46a, type: 3}
     poolCount: 0
     canGrow: 1
     tag: CombatText_Point
+  - poolObjectPrefab: {fileID: 4655567383036871807, guid: 145ff11f5dbf8e4468c184690d5cc493, type: 3}
+    poolCount: 0
+    canGrow: 1
+    tag: Rabbit
 --- !u!4 &423979895
 Transform:
   m_ObjectHideFlags: 0
@@ -898,7 +898,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 6, y: 0.2}
+  m_Size: {x: 6, y: 0.3}
   m_EdgeRadius: 0
 --- !u!1 &1128291860
 GameObject:
@@ -1181,6 +1181,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 764bc36b02b67b948b570fe8f28af8df, type: 2}
   - {fileID: 11400000, guid: 743416dcef94a0d4fbd0168d289fe03f, type: 2}
   - {fileID: 11400000, guid: c28d699db917b3d48a969b2d3c61def5, type: 2}
+  - {fileID: 11400000, guid: 1121ca4a560992d49b335319c7262cc3, type: 2}
   BallGrpCount: 1
 --- !u!4 &2086824019
 Transform:
