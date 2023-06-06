@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.ConstrainedExecution;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
@@ -28,6 +29,7 @@ public class Ball : MonoBehaviour
     private CircleCollider2D circleCollider;
     public LayerMask sticker_Mask;
     List<Vector2> destinations = new List<Vector2>();
+    private Collider2D targetCollider;
     public Transform TF
     {
         get
@@ -58,6 +60,7 @@ public class Ball : MonoBehaviour
         state = BallState.Idle;
         rb.velocity = Vector2.zero;
         gameObject.layer = 0;//Default
+        targetCollider = null;
     }
     private void Update()
     {
@@ -75,18 +78,55 @@ public class Ball : MonoBehaviour
             {
                 if (destinations.Count == 1)
                 {
-                    //circleCollider.enabled = true;
-                    circleCollider.radius = BallRadius;
+                    if (targetCollider != null)
+                    {
+                        if (targetCollider.CompareTag("Ball"))
+                        {
+                            StopMoving();
+                            BoundBallAround();
+                            Ball b = targetCollider.GetComponent<Ball>();
+                            CheckPos(b);
+                        }
+                        if (targetCollider.CompareTag("Top"))
+                        {
+                            StopMoving();
+                            float distance = TF.position.x - offset.x;
+                            distance /= Ball.BallRadius * 2;
+                            float gap = distance - (int)distance;
+                            if (gap > 0.5f)//nghieng ve ben phai
+                            {
+                                if (!SetPos(0, (int)distance + 1))
+                                {
+                                    SetPos(0, (int)distance);
+                                }
+                                //Kiem tra an duoc khong
+                                StartCoroutine(IEReadyCheckAround(1f));
+                            }
+                            else
+                            {
+                                if (!SetPos(0, (int)distance))
+                                {
+                                    SetPos(0, (int)distance + 1);
+                                }
+                                //Kiem tra an duoc khong
+
+                                StartCoroutine(IEReadyCheckAround(1f));
+                            }
+                        }
+                    }
                 }
+                
             }
+            
+        }
+        if(state is BallState.Moving && destinations.Count>0)
+        {
             if (Vector2.Distance(TF.position, destinations[0]) <= 0.001f)
             {
                 TF.position = destinations[0];
                 destinations.RemoveAt(0);
+
             }
-        }
-        if(state is BallState.Moving && destinations.Count>0)
-        {
             TF.position = Vector2.MoveTowards(TF.position,destinations[0],speed*Time.deltaTime);
         }
 
@@ -140,12 +180,12 @@ public class Ball : MonoBehaviour
     {
         rb.AddForce(force);
     }
-    public void Follow(List<Vector2> destinations)
+    public void Follow(List<Vector2> destinations,Collider2D collider)
     {
         this.destinations = destinations;
         state = BallState.Moving;
-        circleCollider.radius = 0.001f;
-
+        circleCollider.radius = Shooter.lazeWidth;
+        targetCollider = collider;
         effect.Play();
         //circleCollider.enabled = false;
     }
@@ -206,8 +246,7 @@ public class Ball : MonoBehaviour
         //Debug.Log(direct);
         float angle = Vector2.Angle(Vector3.down, direct);
         //Debug.Log(angle);
-        Debug.Log(ball.Row);
-        Debug.Log(ball.Col);
+       
         if (direct.x < 0)//left
         {
             if (angle <= 60)//leftbottom
@@ -264,7 +303,19 @@ public class Ball : MonoBehaviour
                             }
                         }
                     }
-                    
+                }
+                else
+                {
+                    if (ball.Row % 2 == 0 && ball.Col > 0)
+                    {
+                        Debug.Log("LeftBottom Chan");
+                        SetPos(ball.Row + 1, ball.Col - 1);
+                    }
+                    else
+                    {
+                        Debug.Log("LeftBottom Le");
+                        SetPos(ball.Row + 1, ball.Col);
+                    }
                 }
                 
             }
@@ -403,29 +454,29 @@ public class Ball : MonoBehaviour
             {
                 if (Color is not BallColor.FireBall)
                 {
-                    StopMoving();
-                    float distance = TF.position.x - offset.x;
-                    distance /= Ball.BallRadius * 2;
-                    float gap = distance - (int)distance;
-                    if (gap > 0.5f)//nghieng ve ben phai
-                    {
-                        if (!SetPos(0, (int)distance + 1))
-                        {
-                            SetPos(0, (int)distance);
-                        }
-                        //Kiem tra an duoc khong
-                        StartCoroutine(IEReadyCheckAround(1f));
-                    }
-                    else
-                    {
-                        if (!SetPos(0, (int)distance))
-                        {
-                            SetPos(0, (int)distance + 1);
-                        }
-                        //Kiem tra an duoc khong
+                    //StopMoving();
+                    //float distance = TF.position.x - offset.x;
+                    //distance /= Ball.BallRadius * 2;
+                    //float gap = distance - (int)distance;
+                    //if (gap > 0.5f)//nghieng ve ben phai
+                    //{
+                    //    if (!SetPos(0, (int)distance + 1))
+                    //    {
+                    //        SetPos(0, (int)distance);
+                    //    }
+                    //    //Kiem tra an duoc khong
+                    //    StartCoroutine(IEReadyCheckAround(1f));
+                    //}
+                    //else
+                    //{
+                    //    if (!SetPos(0, (int)distance))
+                    //    {
+                    //        SetPos(0, (int)distance + 1);
+                    //    }
+                    //    //Kiem tra an duoc khong
                         
-                        StartCoroutine(IEReadyCheckAround(1f));
-                    }
+                    //    StartCoroutine(IEReadyCheckAround(1f));
+                    //}
                 }
                 else
                 {
@@ -441,12 +492,12 @@ public class Ball : MonoBehaviour
             Ball ball = collision.GetComponent<Ball>();
             if (Color is not BallColor.FireBall)
             {
-                if (state is BallState.Moving)
-                {
-                    BoundBallAround();
-                    Debug.Log("Va Cham");
-                    CheckPos(ball);
-                }
+                //if (state is BallState.Moving)
+                //{
+                //    BoundBallAround();
+                //    Debug.Log("Va Cham");
+                //    CheckPos(ball);
+                //}
             }
             else
             {
@@ -491,12 +542,12 @@ public class Ball : MonoBehaviour
         {
             //Debug.Log("Moving");
             TF.position = Vector3.Lerp(TF.position,target,0.5f);
-            yield return new WaitForSeconds(Time.deltaTime * 5);
+            yield return new WaitForSeconds(Time.deltaTime);
         }
         while (Vector2.Distance(oldPos, TF.position) >= 0.001f)
         {
             TF.position = Vector3.Lerp(TF.position, oldPos, 0.5f);
-            yield return new WaitForSeconds(Time.deltaTime * 5);
+            yield return new WaitForSeconds(Time.deltaTime);
         }
 
         //TF.position += (Vector3)direction*Ball.BallRadius/4;

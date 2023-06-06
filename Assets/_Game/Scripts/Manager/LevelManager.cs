@@ -669,8 +669,7 @@ public class LevelManager : GOSingleton<LevelManager>
         {
             for( int i = 0; i < col-1; i++)
             {
-                Debug.Log(balls[0].Count);
-                Debug.Log(col);
+                
                 if (balls[0][i] == null)
                 {
                     res++;

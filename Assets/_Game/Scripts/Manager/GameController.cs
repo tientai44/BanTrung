@@ -17,7 +17,8 @@ public class GameController : GOSingleton<GameController>
     private void Awake()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
+        Input.multiTouchEnabled = false;
+        Application.targetFrameRate = 60;
         int maxScreenHeight = 1280;
         float ratio = (float)Screen.currentResolution.width / (float)Screen.currentResolution.height;
         if (Screen.currentResolution.height > maxScreenHeight)
@@ -123,7 +124,7 @@ public class GameController : GOSingleton<GameController>
     {
         //Shooter.GetInstance().ClearBall();
         yield return StartCoroutine(LevelManager.GetInstance().FallAllBall(Time.deltaTime));
-        yield return StartCoroutine(Shooter.GetInstance().IEClearBall(Time.deltaTime*10f));
+        yield return StartCoroutine(Shooter.GetInstance().IEClearBall(Time.deltaTime));
         yield return new WaitForSeconds(2f);
         Win();
     }

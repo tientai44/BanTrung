@@ -8,7 +8,9 @@ public enum ShooterMode
 }
 public class Shooter : GOSingleton<Shooter>
 {
+    public static float lazeWidth = 0.05f;
     private static Ball tempBall;
+    private Collider2D targetCollider;
     [SerializeField] private int numBall;
     [SerializeField] private List<Ball> balls;
     [SerializeField] private LayerMask wallLayer;
@@ -26,7 +28,7 @@ public class Shooter : GOSingleton<Shooter>
     private bool modeTripleBallActive=false;
     private ShooterMode mode = ShooterMode.Normal;
     public LineRenderer lineRenderer;
-
+    
 
     public Transform TF { 
         get { 
@@ -136,18 +138,7 @@ public class Shooter : GOSingleton<Shooter>
     }
     public void OnInit(int numball)
     {
-        //if (currentBall != null)
-        //{
-        //    BallPool.GetInstance().ReturnToPool(currentBall.tagPool, currentBall.gameObject);
-        //}
-        //if (secondBall != null)
-        //{
-        //    BallPool.GetInstance().ReturnToPool(secondBall.tagPool, secondBall.gameObject);
-        //}
-        //if (thirdBall != null)
-        //{
-        //    BallPool.GetInstance().ReturnToPool(thirdBall.tagPool, thirdBall.gameObject);
-        //}
+        
         StopAllCoroutines();
         currentBall = null;
         secondBall = null;
@@ -255,7 +246,7 @@ public class Shooter : GOSingleton<Shooter>
             }
             UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
             LevelManager.numBallColor[currentBall.Color] += 1;
-            currentBall.Follow(destinations);
+            currentBall.Follow(destinations, targetCollider);
             currentBall = null;
             GameController.GetInstance().ChangeState(GameState.Waiting);
             //Invoke(nameof(GetBall), 2f);
@@ -267,10 +258,11 @@ public class Shooter : GOSingleton<Shooter>
         lineRenderer.enabled = true;
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, startPos);
+        targetCollider = null;
         //lineRenderer.SetPosition(1, transform.position + direction * 100);
         int i;
         for( i=0;i<countBreakLine;i++) {
-            RaycastHit2D hit = Physics2D.CircleCast(startPos, 0.02f, direction, 100f, wallLayer);
+            RaycastHit2D hit = Physics2D.CircleCast(startPos, lazeWidth, direction, 100f, wallLayer);
             if (hit.collider != null && i<countBreakLine-1)
             {
                 if (mode is not ShooterMode.FireBall)
@@ -320,6 +312,7 @@ public class Shooter : GOSingleton<Shooter>
                     {
                         positions.Add(hit.point);
                         lineRenderer.SetPosition(lineRenderer.positionCount - 1, hit.point);
+                        targetCollider = hit.collider;
                         break;
                     }
                 }

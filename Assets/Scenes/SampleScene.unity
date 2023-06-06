@@ -214,7 +214,8 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1116235240}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -912,6 +913,100 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 6, y: 0.3}
   m_EdgeRadius: 0
+--- !u!1 &1116235239
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1116235240}
+  - component: {fileID: 1116235242}
+  - component: {fileID: 1116235241}
+  - component: {fileID: 1116235243}
+  m_Layer: 5
+  m_Name: Text (Legacy)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1116235240
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116235239}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 78963750}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 437, y: 848}
+  m_SizeDelta: {x: 500, y: 200}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1116235241
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116235239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 40
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 4
+    m_MaxSize: 80
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: New Text
+--- !u!222 &1116235242
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116235239}
+  m_CullTransparentMesh: 1
+--- !u!114 &1116235243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1116235239}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4342132d498849c468cd182e516b43d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  txt: {fileID: 1116235241}
 --- !u!1 &1128291860
 GameObject:
   m_ObjectHideFlags: 0
@@ -1208,6 +1303,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f297af6ac4cab3c4bb0928e4f1c6cb92, type: 2}
   - {fileID: 11400000, guid: 64b47dd70db61274a9b086d6aca6b5fb, type: 2}
   - {fileID: 11400000, guid: b7ce3d2e033e19043b68d0cd965beb7f, type: 2}
+  - {fileID: 11400000, guid: b51360369b2fc62489943bc0e8924fa3, type: 2}
+  - {fileID: 11400000, guid: 43169a6c353eb4d439e65b36955f7ea0, type: 2}
+  - {fileID: 11400000, guid: d817a9bdebcc5ef43a83a7dceeb1828b, type: 2}
+  - {fileID: 11400000, guid: 788a951e703932649b3b1903c9ba556f, type: 2}
+  - {fileID: 11400000, guid: 03acff11bfdacaf4e977d24c647784e1, type: 2}
+  - {fileID: 11400000, guid: 4f9f14141ce19244398cd51f27a93305, type: 2}
+  - {fileID: 11400000, guid: 641710b9368c9c1489ac4a2d91c7cda7, type: 2}
+  - {fileID: 11400000, guid: 53bb67c7199c4b342aced185ecc8c57b, type: 2}
+  - {fileID: 11400000, guid: 983306f22a962cd4fa89020e1d861695, type: 2}
+  - {fileID: 11400000, guid: dba0480523fbbc04f9c9db013b9cbe89, type: 2}
   BallGrpCount: 1
 --- !u!4 &2086824019
 Transform:
