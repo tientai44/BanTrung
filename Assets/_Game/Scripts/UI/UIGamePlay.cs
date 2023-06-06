@@ -77,7 +77,15 @@ public class UIGamePlay : UICanvas
     }
     public void FullColorModeButton()
     {
-        Shooter.GetInstance().EnableFullColorBall();
+        Shooter.GetInstance().EnableMode(ShooterMode.FullColor);
+    }
+    public void FireBallModeButton()
+    {
+        Shooter.GetInstance().EnableMode(ShooterMode.FireBall);
+    }
+    public void BombModeButton()
+    {
+        Shooter.GetInstance().EnableMode(ShooterMode.Bomb);
     }
     public void SettingButton()
     {

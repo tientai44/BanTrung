@@ -142,6 +142,13 @@ public class BallPool : GOSingleton<BallPool>
             ReturnToPool(tag, activeObjectPools[tag][0]);
         }
     }
+    public void ClearAllObjectActive()
+    {
+        foreach (Pool pool in poolList)
+        {
+            ClearObjectActive(pool.tag);
+        }
+    }
     IEnumerator ReturnPoolLate(string tag, GameObject go,float time)
     {
         yield return new WaitForSeconds(time);

@@ -59,4 +59,9 @@ public class UILoseGame : UICanvas
         GameController.GetInstance().ChooseLevel(LevelManager.CurrentLevel);
         Close(0f);
     }
+    public void CloseButton()
+    {
+        UIManager.GetInstance().CloseAll();
+        UIManager.GetInstance().OpenUI<UIMainMenu>();
+    }
 }

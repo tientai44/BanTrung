@@ -93,6 +93,7 @@ public class Ball : MonoBehaviour
     }
     public bool SetPos(int x, int y)
     {
+        StopMoving();
         row = x; col = y;
         if (LevelManager.GetInstance().Row <= x)
         {
@@ -132,6 +133,7 @@ public class Ball : MonoBehaviour
         rb.velocity = Vector2.zero;
         //circleCollider.enabled = true;
         circleCollider.radius = BallRadius;
+        rb.gravityScale = 0;
         effect.Stop();
     }
     public void AddForce(Vector2 force)
@@ -142,7 +144,7 @@ public class Ball : MonoBehaviour
     {
         this.destinations = destinations;
         state = BallState.Moving;
-        circleCollider.radius = 0f;
+        circleCollider.radius = 0.001f;
 
         effect.Play();
         //circleCollider.enabled = false;
@@ -170,7 +172,7 @@ public class Ball : MonoBehaviour
     }
   
    
-    IEnumerator ReadyCheckAround(float time)
+    IEnumerator IEReadyCheckAround(float time)
     {
         yield return new WaitForSeconds(time);
         LevelManager.GetInstance().BFS_BallAround(row, col);
@@ -369,8 +371,15 @@ public class Ball : MonoBehaviour
 
         StopMoving();
         //Kiem tra an duoc khong
-   
-        StartCoroutine(ReadyCheckAround(1f));
+        if (Color is not BallColor.Bomb)
+        {
+            StartCoroutine(IEReadyCheckAround(1f));
+        }
+        else
+        {
+            LevelManager.GetInstance().StartCoroutine(LevelManager.GetInstance().PopListBall(BombBallAround(),1f));
+            PopBall(Constants.BallPopPoint);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -378,55 +387,70 @@ public class Ball : MonoBehaviour
 
         if (collision.CompareTag("Wall"))
         {
-            rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
+            if (Color is not BallColor.FireBall)
+            {
+                rb.velocity = new Vector2(-rb.velocity.x, rb.velocity.y);
+            }
+            else
+            {
+                Fire();
+                LevelManager.GetInstance().StartCoroutine(LevelManager.GetInstance().IECheckAll(1f));
+            }
         }
         if (collision.CompareTag("Top"))
         {
             if (state is BallState.Moving)
             {
-                StopMoving();
-                float distance = TF.position.x - offset.x;
-                distance /=Ball.BallRadius*2;
-                float gap = distance - (int)distance;
-                if (gap > 0.5f)//nghieng ve ben phai
+                if (Color is not BallColor.FireBall)
                 {
-                    if(!SetPos(0, (int)distance + 1))
+                    StopMoving();
+                    float distance = TF.position.x - offset.x;
+                    distance /= Ball.BallRadius * 2;
+                    float gap = distance - (int)distance;
+                    if (gap > 0.5f)//nghieng ve ben phai
                     {
-                        SetPos(0, (int)distance);
+                        if (!SetPos(0, (int)distance + 1))
+                        {
+                            SetPos(0, (int)distance);
+                        }
+                        //Kiem tra an duoc khong
+                        StartCoroutine(IEReadyCheckAround(1f));
                     }
-                    //Kiem tra an duoc khong
-                    StartCoroutine(ReadyCheckAround(1f));
+                    else
+                    {
+                        if (!SetPos(0, (int)distance))
+                        {
+                            SetPos(0, (int)distance + 1);
+                        }
+                        //Kiem tra an duoc khong
+                        
+                        StartCoroutine(IEReadyCheckAround(1f));
+                    }
                 }
                 else
                 {
-                    if(!SetPos(0, (int)distance))
-                    {
-                        SetPos(0, (int)distance+1);
-                    }
-                    //Kiem tra an duoc khong
-                    StartCoroutine(ReadyCheckAround(1f));
+                    LevelManager.GetInstance().StartCoroutine(LevelManager.GetInstance().IECheckAll(1f));
+                    Fire();
                 }
             }
+            
         }
 
         if (collision.CompareTag("Ball"))
         {
             Ball ball = collision.GetComponent<Ball>();
-            //if (State is BallState.Idle)
-            //{
-            //    if (ball.State is BallState.Moving)
-            //    {
-            //        Debug.Log("Bound");
-            //        Vector2 direct = ball.TF.position - TF.position;
-            //        float max = Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
-            //        ball.Bound(direct / max);
-            //    }
-            //}
-            if (state is BallState.Moving)
+            if (Color is not BallColor.FireBall)
             {
-                CheckBallAround();
-                Debug.Log("Va Cham");
-                CheckPos(ball);
+                if (state is BallState.Moving)
+                {
+                    BoundBallAround();
+                    Debug.Log("Va Cham");
+                    CheckPos(ball);
+                }
+            }
+            else
+            {
+                ball.Fire();
             }
             
         }
@@ -444,7 +468,15 @@ public class Ball : MonoBehaviour
         }
 
     }
-
+    public void Fire()
+    {
+        if (Color is BallColor.Rabbit)
+        {
+            return;
+        }
+        PopBall(30);
+        
+    }
     public void ThrowUp()
     {
         AddForce(new Vector2(Random.Range(-100, 100), 400f));
@@ -472,7 +504,7 @@ public class Ball : MonoBehaviour
         //Debug.Log((Vector3)direction * Ball.BallRadius / 4);
         //TF.position = oldPos;
     }
-    public void CheckBallAround()
+    public void BoundBallAround()
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, BallRadius);
 
@@ -488,12 +520,29 @@ public class Ball : MonoBehaviour
                 //Debug.Log("Bound");
                 Vector2 direct = ball.TF.position - TF.position;
                 float max = Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
-                Debug.Log(max);
-                Debug.Log(direct / max);
+          
                 ball.StartCoroutine(ball.Bound(direct / max));
-
             }
         }
+    }
+    public List<Ball> BombBallAround()
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, BallRadius*4);
+        List<Ball> list = new List<Ball>();
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.CompareTag("Ball"))
+            {
+                Ball ball = collider.GetComponent<Ball>();
+                if (ball == this || ball.Color is BallColor.Rabbit)
+                {
+                    continue;
+                }
+              
+                list.Add(ball);
+            }
+        }
+        return list;
     }
 
     public bool IsEqualColor(Ball ball)

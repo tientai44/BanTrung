@@ -13,4 +13,10 @@ public class LevelScriptTableObject : ScriptableObject
     public List<int> CheckPoints;
     public int NumBall;
     public LevelType LevelType;
+    public static Dictionary<LevelType, string> descriptions = new Dictionary<LevelType, string>
+    {
+        {LevelType.ClearBall,"Eliminate Targeted Elements" },
+        {LevelType.SaveRabbit,"Rescue Animals" },
+        {LevelType.CollectFlower,"Collect Flower" }
+    };
 }

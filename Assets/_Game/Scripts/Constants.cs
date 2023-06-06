@@ -10,11 +10,14 @@ public static class Constants
     public static int BallFallPoint = 100;
     public static int RemainBallPoint = 200;
     public static string SAVE_FILE_NAME = "SaveGame.ss";
+    
     // Prefab Tag
     public static string RedBall = "RedBall";
     public static string BlueBall = "BlueBall";
     public static string GreenBall = "GreenBall";
     public static string FullColorBall = "FullColorBall";
+    public static string Bomb = "Bomb";
+    public static string FireBall = "FireBall";
     public static string Rabbit = "Rabbit";
     public static string CombatText_Point = "CombatText_Point";
 }

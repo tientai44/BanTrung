@@ -71,10 +71,13 @@ public class LevelManager : GOSingleton<LevelManager>
         numBallColor[BallColor.Blue] = 0;
         numBallColor[BallColor.Rabbit] = 0;
         numBallColor[BallColor.FullColor] = 0;
-        BallPool.GetInstance().ClearObjectActive(Constants.RedBall);
-        BallPool.GetInstance().ClearObjectActive(Constants.BlueBall);
-        BallPool.GetInstance().ClearObjectActive(Constants.GreenBall);
-        BallPool.GetInstance().ClearObjectActive(Constants.Rabbit);
+        numBallColor[BallColor.FireBall] = 0;
+        numBallColor[BallColor.Bomb] = 0;
+        //BallPool.GetInstance().ClearObjectActive(Constants.RedBall);
+        //BallPool.GetInstance().ClearObjectActive(Constants.BlueBall);
+        //BallPool.GetInstance().ClearObjectActive(Constants.GreenBall);
+        //BallPool.GetInstance().ClearObjectActive(Constants.Rabbit);
+        BallPool.GetInstance().ClearAllObjectActive();
         Constants.Score = 0;
         balls.Clear();
         map.Clear();
@@ -191,9 +194,11 @@ public class LevelManager : GOSingleton<LevelManager>
     public void ReadFile(string fileName)
     {
         var textFile = Resources.Load<TextAsset>(fileName);
-
+        Debug.Log(fileName);
         string text = textFile.text;
         string[] arrListStr = text.Split('\n');
+        Debug.Log(arrListStr.Length);
+        
         row = arrListStr.Length;
         //map = new int[arrListStr.Length][];
 
@@ -204,6 +209,7 @@ public class LevelManager : GOSingleton<LevelManager>
 
         for (int i = 0; i < arrListStr.Length; i++)
         {
+            Debug.Log(arrListStr[i]);
             string[] temp = arrListStr[i].Split(' ');
             col = temp.Length;
             for (int j = 0; j < col; j++)
@@ -227,10 +233,10 @@ public class LevelManager : GOSingleton<LevelManager>
         }
        
          //Sau moi luot ban
-         StartCoroutine(CheckAll(1f));
+         StartCoroutine(IECheckAll(1f));
         
     }
-    IEnumerator CheckAll(float time)
+    public IEnumerator IECheckAll(float time)
     {
         //bool flag =PopAllBall();
         //if (flag == true)
@@ -324,6 +330,15 @@ public class LevelManager : GOSingleton<LevelManager>
         }
         ballsListToPop.Clear();
         return true;
+    }
+    public IEnumerator PopListBall(List<Ball> balls,float time)
+    {
+        yield return new WaitForSeconds(time);
+        for(int i = 0;i < balls.Count; i++)
+        {
+            balls[i].PopBall(Constants.BallPopPoint);
+        }
+        yield return StartCoroutine(IECheckAll(1f));
     }
     void AddToCheckList(Ball b)
     {
@@ -621,7 +636,7 @@ public class LevelManager : GOSingleton<LevelManager>
         }
         else if(levelInfor.LevelType is LevelType.CollectFlower)
         {
-            if (SearchFirstRow()==targetNum)
+            if (SearchFirstRow()>=targetNum)
             {
                 return true;
             }

@@ -63,6 +63,7 @@ public class GameController : GOSingleton<GameController>
     }
     public void ChooseLevel(int level)
     {
+        Debug.Log(level);
         State = GameState.Waiting;
         target = intialPos_BallZone;
         BallZone.position = target;
@@ -88,7 +89,33 @@ public class GameController : GOSingleton<GameController>
     public void Win()
     {
         UIManager.GetInstance().OpenUI<UIWinGame>();
-        
+        int lv = LevelManager.CurrentLevel;
+        if (SaveLoadManager.GetInstance().Data1.CurrentLv <= lv) {
+            SaveLoadManager.GetInstance().Data1.CurrentLv = lv+1;
+            SaveLoadManager.GetInstance().Data1.Points.Add(0);
+            SaveLoadManager.GetInstance().Data1.StarNumbers.Add(0);
+        }
+        if (SaveLoadManager.GetInstance().Data1.Points[lv-1]<=Constants.Score)
+        {
+            SaveLoadManager.GetInstance().Data1.Points[lv - 1] = Constants.Score;
+        }
+        int star=0;
+        if (Constants.Score > LevelManager.CheckPoints[0]) {
+            star = 1;
+        }
+        if (Constants.Score > LevelManager.CheckPoints[1])
+        {
+            star = 2;
+        }
+        if (Constants.Score > LevelManager.CheckPoints[2])
+        {
+            star = 3;
+        }
+        if (SaveLoadManager.GetInstance().Data1.StarNumbers[lv - 1] <= star)
+        {
+            SaveLoadManager.GetInstance().Data1.StarNumbers[lv - 1] = star;
+        }
+        SaveLoadManager.GetInstance().Save();
         ChangeState(GameState.Win);
     }
 

@@ -560,6 +560,14 @@ MonoBehaviour:
     poolCount: 0
     canGrow: 1
     tag: FullColorBall
+  - poolObjectPrefab: {fileID: 2257033870724038915, guid: 9b5ca28fe1cc1c04ea55f1f7a1967249, type: 3}
+    poolCount: 0
+    canGrow: 1
+    tag: Bomb
+  - poolObjectPrefab: {fileID: 1442618637719961673, guid: 1bdb396db7d3c4943ba9cea8c78e150d, type: 3}
+    poolCount: 0
+    canGrow: 1
+    tag: FireBall
 --- !u!4 &423979895
 Transform:
   m_ObjectHideFlags: 0
@@ -1186,6 +1194,20 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 743416dcef94a0d4fbd0168d289fe03f, type: 2}
   - {fileID: 11400000, guid: c28d699db917b3d48a969b2d3c61def5, type: 2}
   - {fileID: 11400000, guid: 1121ca4a560992d49b335319c7262cc3, type: 2}
+  - {fileID: 11400000, guid: c81ad6b37022cdb49bf985aa13d6517f, type: 2}
+  - {fileID: 11400000, guid: 8dff4fe03abb4454bbe51758e03a223c, type: 2}
+  - {fileID: 11400000, guid: 84bbd2df95a22064b8e5d41a94c02a8b, type: 2}
+  - {fileID: 11400000, guid: 0b5045a36ba375540b684a67f2df7fdd, type: 2}
+  - {fileID: 11400000, guid: 90f70d29369c5404895828cf3c199338, type: 2}
+  - {fileID: 11400000, guid: c19bf2b2f33a57c4d90215b19485e585, type: 2}
+  - {fileID: 11400000, guid: 713241764be202f46bdd964d506bfd1f, type: 2}
+  - {fileID: 11400000, guid: 219150d1e6d5daa469faf2bcfc415c54, type: 2}
+  - {fileID: 11400000, guid: 2b75aeea3d318614a95e805c4127fe4b, type: 2}
+  - {fileID: 11400000, guid: 68ea7eb5757097049a693da0aea78a1c, type: 2}
+  - {fileID: 11400000, guid: d8abc3fd6a7e4cb4697e4b6f2e183b99, type: 2}
+  - {fileID: 11400000, guid: f297af6ac4cab3c4bb0928e4f1c6cb92, type: 2}
+  - {fileID: 11400000, guid: 64b47dd70db61274a9b086d6aca6b5fb, type: 2}
+  - {fileID: 11400000, guid: b7ce3d2e033e19043b68d0cd965beb7f, type: 2}
   BallGrpCount: 1
 --- !u!4 &2086824019
 Transform:

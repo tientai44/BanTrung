@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum ShooterMode
 {
-    Normal,FullColor,Bomb,FireMode
+    Normal,FullColor,Bomb,FireBall
 }
 public class Shooter : GOSingleton<Shooter>
 {
@@ -54,7 +54,7 @@ public class Shooter : GOSingleton<Shooter>
         }
         if (currentBall == null)
         {
-            if(mode is ShooterMode.FullColor)
+            if(mode is not ShooterMode.Normal)
             {
                 UnEnableAnyMode();
             }
@@ -136,11 +136,25 @@ public class Shooter : GOSingleton<Shooter>
     }
     public void OnInit(int numball)
     {
+        //if (currentBall != null)
+        //{
+        //    BallPool.GetInstance().ReturnToPool(currentBall.tagPool, currentBall.gameObject);
+        //}
+        //if (secondBall != null)
+        //{
+        //    BallPool.GetInstance().ReturnToPool(secondBall.tagPool, secondBall.gameObject);
+        //}
+        //if (thirdBall != null)
+        //{
+        //    BallPool.GetInstance().ReturnToPool(thirdBall.tagPool, thirdBall.gameObject);
+        //}
+        StopAllCoroutines();
         currentBall = null;
         secondBall = null;
         thirdBall = null;
         this.numBall = numball;
         modeTripleBallActive = false;
+        Mode = ShooterMode.Normal;
         secondBall = RandomBall();
         secondBall.TF.position = shootPoints[1].position;
         StartCoroutine(GetBall());
@@ -236,7 +250,9 @@ public class Shooter : GOSingleton<Shooter>
         }
         if (currentBall.State is not BallState.Moving)//Shoot
         {
-            numBall -= 1;
+            if (Mode is ShooterMode.Normal) {
+                numBall -= 1;
+            }
             UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
             LevelManager.numBallColor[currentBall.Color] += 1;
             currentBall.Follow(destinations);
@@ -256,55 +272,63 @@ public class Shooter : GOSingleton<Shooter>
         for( i=0;i<countBreakLine;i++) {
             RaycastHit2D hit = Physics2D.CircleCast(startPos, 0.02f, direction, 100f, wallLayer);
             if (hit.collider != null && i<countBreakLine-1)
-            {       
-                Vector2 hitpoint;
-                if (hit.collider.CompareTag("Wall"))
+            {
+                if (mode is not ShooterMode.FireBall)
                 {
-                    float angle = Vector2.Angle(direction, Vector2.up);
-                    float distanceHeight = ballRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
-                    if (direction.x > 0)
+                    Vector2 hitpoint;
+                    if (hit.collider.CompareTag("Wall"))
                     {
-                        hitpoint = hit.point + new Vector2(-ballRadius, -distanceHeight);
+                        float angle = Vector2.Angle(direction, Vector2.up);
+                        float distanceHeight = ballRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
+                        if (direction.x > 0)
+                        {
+                            hitpoint = hit.point + new Vector2(-ballRadius, -distanceHeight);
+                        }
+                        else
+                        {
+                            hitpoint = hit.point + new Vector2(ballRadius, -distanceHeight);
+                        }
+                        startPos = hitpoint;
+                        lineRenderer.SetPosition(lineRenderer.positionCount - 1, hitpoint);
+                        // Thực hiện thay đổi hướng tại điểm va chạm (hit.point)
+                        // Ví dụ: direction = Vector3.Reflect(direction, hit.normal);
+                        direction = new Vector3(-direction.x, direction.y, direction.z);
+                        lineRenderer.positionCount = lineRenderer.positionCount + 1;
+                        positions.Add(hitpoint);
                     }
-                    else
+                    else if (hit.collider.CompareTag("TopWall"))
                     {
-                        hitpoint = hit.point + new Vector2(ballRadius, -distanceHeight);
+                        float angle = Vector2.Angle(direction, Vector2.right);
+                        float distanceWidth = ballRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
+                        if (direction.x > 0)
+                        {
+                            hitpoint = hit.point + new Vector2(-distanceWidth, -ballRadius);
+                        }
+                        else
+                        {
+                            hitpoint = hit.point + new Vector2(distanceWidth, -ballRadius);
+                        }
+                        startPos = hitpoint;
+                        lineRenderer.SetPosition(lineRenderer.positionCount - 1, hitpoint);
+                        // Thực hiện thay đổi hướng tại điểm va chạm (hit.point)
+                        // Ví dụ: direction = Vector3.Reflect(direction, hit.normal);
+                        direction = new Vector3(direction.x, -direction.y, direction.z);
+                        lineRenderer.positionCount = lineRenderer.positionCount + 1;
+                        positions.Add(hitpoint);
                     }
-                    startPos = hitpoint;
-                    lineRenderer.SetPosition(lineRenderer.positionCount - 1, hitpoint);
-                    // Thực hiện thay đổi hướng tại điểm va chạm (hit.point)
-                    // Ví dụ: direction = Vector3.Reflect(direction, hit.normal);
-                    direction = new Vector3(-direction.x, direction.y, direction.z);
-                    lineRenderer.positionCount = lineRenderer.positionCount + 1;
-                    positions.Add(hitpoint);
+                    else if (hit.collider.CompareTag("Ball") || hit.collider.CompareTag("Top"))
+                    {
+                        positions.Add(hit.point);
+                        lineRenderer.SetPosition(lineRenderer.positionCount - 1, hit.point);
+                        break;
+                    }
                 }
-                else if (hit.collider.CompareTag("TopWall"))
+                else
                 {
-                    float angle = Vector2.Angle(direction, Vector2.right);
-                    float distanceWidth = ballRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
-                    if (direction.x > 0)
-                    {
-                        hitpoint = hit.point + new Vector2(-distanceWidth, -ballRadius);
-                    }
-                    else
-                    {
-                        hitpoint = hit.point + new Vector2(distanceWidth, -ballRadius);
-                    }
-                    startPos = hitpoint;
-                    lineRenderer.SetPosition(lineRenderer.positionCount - 1, hitpoint);
-                    // Thực hiện thay đổi hướng tại điểm va chạm (hit.point)
-                    // Ví dụ: direction = Vector3.Reflect(direction, hit.normal);
-                    direction = new Vector3(direction.x, -direction.y, direction.z);
-                    lineRenderer.positionCount = lineRenderer.positionCount + 1;
-                    positions.Add(hitpoint);
-                }
-                else if (hit.collider.CompareTag("Ball")|| hit.collider.CompareTag("Top"))
-                {
-                    positions.Add(hit.point);
-                    lineRenderer.SetPosition(lineRenderer.positionCount - 1, hit.point);
+                    lineRenderer.SetPosition(lineRenderer.positionCount - 1, transform.position + direction * 100);
+                    positions.Add(transform.position + direction * 100);
                     break;
                 }
-
 
             }
             else
@@ -392,22 +416,28 @@ public class Shooter : GOSingleton<Shooter>
         thirdBall = RandomBall();
         thirdBall.TF.position = shootPoints[2].position;
     }
-    public void EnableFullColorBall()
+ 
+    public void EnableMode(ShooterMode shooterMode)
     {
-        if(mode is ShooterMode.FullColor)
+        if (mode is not ShooterMode.Normal || currentBall == null)
         {
             return;
         }
-        mode = ShooterMode.FullColor;
+        mode = shooterMode;
         tempBall = currentBall;
-        currentBall.gameObject.SetActive(false);
+        tempBall.gameObject.SetActive(false);
         secondBall.gameObject.SetActive(false);
         if (thirdBall != null)
         {
             thirdBall.gameObject.SetActive(false);
         }
-        currentBall = BallPool.GetInstance().GetFromPool(Constants.FullColorBall, shootPoints[0].position).GetComponent<Ball>();
-        currentBall.OnInit();   
+        if(mode is ShooterMode.FullColor)
+            currentBall = BallPool.GetInstance().GetFromPool(Constants.FullColorBall, shootPoints[0].position).GetComponent<Ball>();
+        if (mode is ShooterMode.Bomb)
+            currentBall = BallPool.GetInstance().GetFromPool(Constants.Bomb, shootPoints[0].position).GetComponent<Ball>();
+        if (mode is ShooterMode.FireBall)
+            currentBall = BallPool.GetInstance().GetFromPool(Constants.FireBall, shootPoints[0].position).GetComponent<Ball>();
+        currentBall.OnInit();
     }
     public void UnEnableAnyMode()
     {
@@ -415,6 +445,7 @@ public class Shooter : GOSingleton<Shooter>
         {
             return;
         }
+        Debug.Log("unable");
         mode = ShooterMode.Normal;
         currentBall = tempBall; 
         currentBall.gameObject.SetActive(true);
@@ -424,4 +455,5 @@ public class Shooter : GOSingleton<Shooter>
             thirdBall.gameObject.SetActive(true);
         }
     }
+    
 }

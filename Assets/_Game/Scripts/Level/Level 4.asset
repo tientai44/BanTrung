@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Level 4
   m_EditorClassIdentifier: 
   Filename: Level4
-  CheckPoints: e8030000d0070000b80b0000
-  NumBall: 40
+  CheckPoints: e8030000dc050000d0070000
+  NumBall: 20
+  LevelType: 0

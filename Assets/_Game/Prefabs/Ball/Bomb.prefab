@@ -7,6 +7,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 792144863, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: color
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 792144863, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: tagPool
+      value: Bomb
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4988195444827558587, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -53,7 +73,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5294738988299029059, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Name
-      value: Ball
+      value: Bomb
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}

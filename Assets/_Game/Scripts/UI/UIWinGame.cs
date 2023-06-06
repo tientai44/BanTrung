@@ -58,8 +58,11 @@ public class UIWinGame : UICanvas
 
     public void ContinueButton()
     {
-        GameController.GetInstance().ChooseLevel(LevelManager.CurrentLevel+1);
-        Close(0f);
+        if(LevelManager.GetInstance().levelInfors.Count >= LevelManager.CurrentLevel + 1) {
+            GameController.GetInstance().ChooseLevel(LevelManager.CurrentLevel + 1);
+            Close(0f);
+        }
+        
     }
     public void ReplayButton()
     {
@@ -75,5 +78,10 @@ public class UIWinGame : UICanvas
             
         }
         base.CloseDirectly();
+    }
+    public void CloseButton()
+    {
+        UIManager.GetInstance().CloseAll();
+        UIManager.GetInstance().OpenUI<UIMainMenu>();
     }
 }
