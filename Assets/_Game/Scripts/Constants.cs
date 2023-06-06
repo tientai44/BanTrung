@@ -16,6 +16,7 @@ public static class Constants
     public static string BlueBall = "BlueBall";
     public static string GreenBall = "GreenBall";
     public static string FullColorBall = "FullColorBall";
+    public static string Leaf = "Leaf";
     public static string Bomb = "Bomb";
     public static string FireBall = "FireBall";
     public static string Rabbit = "Rabbit";

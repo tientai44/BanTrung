@@ -27,7 +27,6 @@ public class Ball : MonoBehaviour
     private int row, col;
     private float speed=10f;
     private CircleCollider2D circleCollider;
-    public LayerMask sticker_Mask;
     List<Vector2> destinations = new List<Vector2>();
     private Collider2D targetCollider;
     public Transform TF
@@ -232,13 +231,7 @@ public class Ball : MonoBehaviour
         state = BallState.Fall;
         rb.gravityScale = 2f;
     }
-    //public bool isStick()
-    //{
-    //    Collider2D[] hitColliders = Physics2D.OverlapCircleAll(new Vector2(TF.position.x,TF.position.y),0.25f,sticker_Mask);
-        
-    //    if(hitColliders.Length > 0) { return true; }
-    //    return false;
-    //}
+    
     void CheckPos(Ball ball)
     {
         Vector3 direct = TF.position - ball.TF.position;
@@ -452,57 +445,25 @@ public class Ball : MonoBehaviour
         {
             if (state is BallState.Moving)
             {
-                if (Color is not BallColor.FireBall)
-                {
-                    //StopMoving();
-                    //float distance = TF.position.x - offset.x;
-                    //distance /= Ball.BallRadius * 2;
-                    //float gap = distance - (int)distance;
-                    //if (gap > 0.5f)//nghieng ve ben phai
-                    //{
-                    //    if (!SetPos(0, (int)distance + 1))
-                    //    {
-                    //        SetPos(0, (int)distance);
-                    //    }
-                    //    //Kiem tra an duoc khong
-                    //    StartCoroutine(IEReadyCheckAround(1f));
-                    //}
-                    //else
-                    //{
-                    //    if (!SetPos(0, (int)distance))
-                    //    {
-                    //        SetPos(0, (int)distance + 1);
-                    //    }
-                    //    //Kiem tra an duoc khong
-                        
-                    //    StartCoroutine(IEReadyCheckAround(1f));
-                    //}
-                }
-                else
+                if (Color is BallColor.FireBall)
                 {
                     LevelManager.GetInstance().StartCoroutine(LevelManager.GetInstance().IECheckAll(1f));
                     Fire();
                 }
+                
             }
             
         }
 
         if (collision.CompareTag("Ball"))
         {
-            Ball ball = collision.GetComponent<Ball>();
-            if (Color is not BallColor.FireBall)
+            
+            if (Color is  BallColor.FireBall)
             {
-                //if (state is BallState.Moving)
-                //{
-                //    BoundBallAround();
-                //    Debug.Log("Va Cham");
-                //    CheckPos(ball);
-                //}
-            }
-            else
-            {
+                Ball ball = collision.GetComponent<Ball>();
                 ball.Fire();
             }
+            
             
         }
         if (collision.CompareTag("Bottom"))
@@ -599,8 +560,6 @@ public class Ball : MonoBehaviour
     public bool IsEqualColor(Ball ball)
     {
         return ball.Color is BallColor.FullColor || this.Color == BallColor.FullColor || ball.Color == this.Color;
-
-
 
     }
 

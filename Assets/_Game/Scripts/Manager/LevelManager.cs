@@ -147,13 +147,24 @@ public class LevelManager : GOSingleton<LevelManager>
         }
         else if (levelInfor.LevelType is LevelType.CollectFlower)
         {
+            SetUpLeaf();
             targetNum = 6;
             UIManager.GetInstance().GetUI<UIGamePlay>().SetMissionProcess(SearchFirstRow().ToString() + "/" + targetNum.ToString());
         }
         UIManager.GetInstance().GetUI<UIGamePlay>().SetShooterPosition();
+        UIManager.GetInstance().GetUI<UIGamePlay>().SetMissionImg(levelInfor.LevelType);
         Shooter.GetInstance().OnInit(levelInfor.NumBall);
         
         ResetLine();
+    }
+    public void SetUpLeaf()
+    {
+        for(int i = 0; i < col - 1; i++)
+        {
+            Vector3 pos = new Vector3(i, 0, 0) * Ball.BallRadius * 2  + Ball.offset; ;
+            GameObject leaf = BallPool.GetInstance().GetFromPool(Constants.Leaf, pos);
+            leaf.transform.SetParent(GameController.GetInstance().BallZone);
+        }
     }
     public void ResetLine()
     {
@@ -194,10 +205,8 @@ public class LevelManager : GOSingleton<LevelManager>
     public void ReadFile(string fileName)
     {
         var textFile = Resources.Load<TextAsset>(fileName);
-        Debug.Log(fileName);
         string text = textFile.text;
         string[] arrListStr = text.Split('\n');
-        Debug.Log(arrListStr.Length);
         
         row = arrListStr.Length;
         //map = new int[arrListStr.Length][];
@@ -209,7 +218,6 @@ public class LevelManager : GOSingleton<LevelManager>
 
         for (int i = 0; i < arrListStr.Length; i++)
         {
-            Debug.Log(arrListStr[i]);
             string[] temp = arrListStr[i].Split(' ');
             col = temp.Length;
             for (int j = 0; j < col; j++)

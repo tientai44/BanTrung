@@ -16,16 +16,20 @@ PrefabInstance:
       value: BlueBall
       objectReference: {fileID: 0}
     - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: d4a1121e8a4b8435786ed23c7a9095c3, type: 3}
+    - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Color.b
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Color.g
-      value: 0.28146982
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4988195444827558587, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_RootOrder
@@ -74,6 +78,18 @@ PrefabInstance:
     - target: {fileID: 5294738988299029059, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Name
       value: BlueBall Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 5802363011250736139, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5802363011250736139, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5802363011250736139, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 5802363011250736139, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_LocalPosition.x

@@ -45,7 +45,7 @@ public class Shooter : GOSingleton<Shooter>
 
     private void Awake()
     {
-        lineRenderer = GetComponent<LineRenderer>();
+        //lineRenderer = GetComponent<LineRenderer>();
     }
     private void Update()
     {

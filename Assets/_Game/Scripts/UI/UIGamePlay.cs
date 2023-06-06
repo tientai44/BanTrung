@@ -12,6 +12,9 @@ public class UIGamePlay : UICanvas
     [SerializeField] private Button SwitchButton;
     [SerializeField] private Image imgFill;
     [SerializeField] private List<Star> stars = new List<Star>();
+    [SerializeField] private Sprite ClearBallSprite;
+    [SerializeField] private Sprite RescueSprite;
+    [SerializeField] private Sprite CollectFlowerSprite;
     private float targetFill;
     public override void Open()
     {
@@ -98,5 +101,20 @@ public class UIGamePlay : UICanvas
     public void SetMissionProcess(string txt)
     {
         MissionProcessTxt.text = txt;
+    }
+    public void SetMissionImg(LevelType type)
+    {
+        if (type is LevelType.CollectFlower)
+        {
+            missionImg.sprite = CollectFlowerSprite;
+        }
+        if(type is LevelType.ClearBall)
+        {
+            missionImg.sprite= ClearBallSprite;
+        }
+        if(type is LevelType.SaveRabbit)
+        {
+            missionImg.sprite = RescueSprite;
+        }
     }
 }
