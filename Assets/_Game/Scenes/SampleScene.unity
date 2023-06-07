@@ -342,7 +342,7 @@ GameObject:
   - component: {fileID: 249923141}
   - component: {fileID: 249923142}
   m_Layer: 0
-  m_Name: Square
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -356,8 +356,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 249923140}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.36, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.45, z: 1}
+  m_LocalPosition: {x: 0.0192, y: -0.0036, z: 0}
+  m_LocalScale: {x: 0.41505167, y: 0.48480707, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 128314881}
@@ -409,7 +409,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.0376291, y: 1.0773491}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -657,7 +657,23 @@ MonoBehaviour:
   - poolObjectPrefab: {fileID: 5467638252023417671, guid: 49dd8bb953a19ef43a89f151b2bb0256, type: 3}
     poolCount: 0
     canGrow: 1
-    tag: FireBall
+    tag: Leaf
+  - poolObjectPrefab: {fileID: 193104, guid: c2f28a236b0696a4f90a994422019577, type: 3}
+    poolCount: 0
+    canGrow: 1
+    tag: BalloonPop
+  - poolObjectPrefab: {fileID: 1064017763686746, guid: b50d1a9fd3d0a4e9289307e0393b7e4f, type: 3}
+    poolCount: 0
+    canGrow: 1
+    tag: FireEffect
+  - poolObjectPrefab: {fileID: 5467638252023417671, guid: 49dd8bb953a19ef43a89f151b2bb0256, type: 3}
+    poolCount: 0
+    canGrow: 1
+    tag: Leaf
+  - poolObjectPrefab: {fileID: 180702, guid: a7c694f0877ea874fa57e033221095c3, type: 3}
+    poolCount: 0
+    canGrow: 1
+    tag: Explosion
 --- !u!4 &423979895
 Transform:
   m_ObjectHideFlags: 0
@@ -1592,6 +1608,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 120677706, guid: 0800a4de821450b48bb1545667a68edf, type: 3}
+      propertyPath: m_SortingOrder
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7525253205290744955, guid: 0800a4de821450b48bb1545667a68edf, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.15

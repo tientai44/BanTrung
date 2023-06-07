@@ -21,6 +21,8 @@ public class Ball : MonoBehaviour
     public string tagPool;
     [SerializeField] private BallColor color;
     [SerializeField] ParticleSystem effect;
+    [SerializeField] private GameObject elementEffect;
+
     private Rigidbody2D rb;
     public BallState state = BallState.Idle;
     private Transform tf;
@@ -60,6 +62,10 @@ public class Ball : MonoBehaviour
         rb.velocity = Vector2.zero;
         gameObject.layer = 0;//Default
         targetCollider = null;
+        if (elementEffect != null)
+        {
+            elementEffect.SetActive(true);
+        }
     }
     private void Update()
     {
@@ -98,8 +104,9 @@ public class Ball : MonoBehaviour
                                 {
                                     SetPos(0, (int)distance);
                                 }
-                                //Kiem tra an duoc khong
-                                StartCoroutine(IEReadyCheckAround(1f));
+                                ////Kiem tra an duoc khong
+                                //StartCoroutine(IEReadyCheckAround(Time.deltaTime*20));
+                                
                             }
                             else
                             {
@@ -107,9 +114,16 @@ public class Ball : MonoBehaviour
                                 {
                                     SetPos(0, (int)distance + 1);
                                 }
-                                //Kiem tra an duoc khong
+                                ////Kiem tra an duoc khong
 
-                                StartCoroutine(IEReadyCheckAround(1f));
+                                //StartCoroutine(IEReadyCheckAround(Time.deltaTime * 20));
+                            }
+                            //Kiem tra an duoc khong
+                            StartCoroutine(IEReadyCheckAround(Time.deltaTime * 20));
+                            if(Color is BallColor.Bomb)
+                            {
+                                LevelManager.GetInstance().StartCoroutine(LevelManager.GetInstance().PopListBall(BombBallAround(), Time.deltaTime * 20));
+                                PopBall(Constants.BallPopPoint);
                             }
                         }
                     }
@@ -167,6 +181,7 @@ public class Ball : MonoBehaviour
     }
     public void StopMoving()
     {
+        
         destinations.Clear();
         state = BallState.Idle;
         rb.velocity = Vector2.zero;
@@ -186,6 +201,10 @@ public class Ball : MonoBehaviour
         circleCollider.radius = Shooter.lazeWidth;
         targetCollider = collider;
         effect.Play();
+        if(elementEffect != null)
+        {
+            elementEffect.SetActive(false);
+        }
         //circleCollider.enabled = false;
     }
     public void PopBall(int point)
@@ -199,7 +218,9 @@ public class Ball : MonoBehaviour
         }
         gameObject.layer = 0;
         LevelManager.numBallColor[color] -= 1;
-
+        ParticleSystem effect = BallPool.GetInstance().GetFromPool(Constants.BallonPopEffect, TF.position).GetComponent<ParticleSystem>();
+        effect.Play();
+        BallPool.GetInstance().ReturnToPool(Constants.BallonPopEffect, effect.gameObject,0.5f);
         BallPool.GetInstance().ReturnToPool(tagPool,gameObject);
 
         Constants.Score += point;
@@ -417,11 +438,11 @@ public class Ball : MonoBehaviour
         //Kiem tra an duoc khong
         if (Color is not BallColor.Bomb)
         {
-            StartCoroutine(IEReadyCheckAround(1f));
+            StartCoroutine(IEReadyCheckAround(Time.deltaTime * 20));
         }
         else
         {
-            LevelManager.GetInstance().StartCoroutine(LevelManager.GetInstance().PopListBall(BombBallAround(),1f));
+            LevelManager.GetInstance().StartCoroutine(LevelManager.GetInstance().PopListBall(BombBallAround(), Time.deltaTime * 20));
             PopBall(Constants.BallPopPoint);
         }
     }
@@ -486,7 +507,9 @@ public class Ball : MonoBehaviour
         {
             return;
         }
-        PopBall(30);
+        GameObject fire = BallPool.GetInstance().GetFromPool(Constants.FireEffect, TF.position);
+        BallPool.GetInstance().ReturnToPool(Constants.FireEffect, fire,0.5f);
+        PopBall(Constants.BallPopPoint);
         
     }
     public void ThrowUp()
@@ -540,6 +563,8 @@ public class Ball : MonoBehaviour
     public List<Ball> BombBallAround()
     {
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, BallRadius*4);
+        GameObject effect= BallPool.GetInstance().GetFromPool(Constants.ExplosionEffect, TF.position);
+        BallPool.GetInstance().ReturnToPool(Constants.ExplosionEffect, effect,0.5f);
         List<Ball> list = new List<Ball>();
         foreach (Collider2D collider in colliders)
         {
@@ -559,6 +584,10 @@ public class Ball : MonoBehaviour
 
     public bool IsEqualColor(Ball ball)
     {
+        if(ball.Color is BallColor.Rabbit || Color is BallColor.Rabbit)
+        {
+            return false;
+        }
         return ball.Color is BallColor.FullColor || this.Color == BallColor.FullColor || ball.Color == this.Color;
 
     }

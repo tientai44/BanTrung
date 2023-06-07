@@ -9,6 +9,7 @@ public class ButtonLevel : MonoBehaviour
     Button btn;
     [SerializeField] Text txtLevel;
     [SerializeField] List<Star> stars;
+    [SerializeField] Image LockImg;
     private bool isLock = true;
     public void SetUp(int lv)
     {
@@ -21,8 +22,10 @@ public class ButtonLevel : MonoBehaviour
             {
                 star.gameObject.SetActive(false);
             }
+            LockImg.gameObject.SetActive(true);
             return; 
         }
+        LockImg.gameObject.SetActive(false);
         foreach (Star star in stars)
         {
             star.gameObject.SetActive(true);

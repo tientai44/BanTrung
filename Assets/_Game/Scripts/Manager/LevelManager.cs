@@ -259,7 +259,8 @@ public class LevelManager : GOSingleton<LevelManager>
         //}
         ////Check Game
         //ResetLine();
-        yield return new WaitUntil(() => PopAllBall()); // Đợi cho đến khi PopAllBall() trả về true
+        //yield return new WaitUntil(() => PopAllBall()); // Đợi cho đến khi PopAllBall() trả về true
+        yield return StartCoroutine(PopAllBall());
 
         // Kiểm tra các quả bóng lơ lửng
         yield return new WaitUntil(() => BFS_BallCheckAll()); // Đợi cho đến khi BFS_BallCheckAll() trả về true
@@ -327,18 +328,20 @@ public class LevelManager : GOSingleton<LevelManager>
             queue.Enqueue(b);
         }
     }
-    public bool PopAllBall()
+    public IEnumerator PopAllBall()
     {
         if (ballsListToPop.Count >= 3 || Shooter.GetInstance().Mode is ShooterMode.FullColor)
         {
             foreach (Ball b in ballsListToPop)
             {
                 b.PopBall(Constants.BallPopPoint);
+                yield return new WaitForSeconds(Time.deltaTime*2);
             }
         }
         ballsListToPop.Clear();
-        return true;
+        
     }
+    
     public IEnumerator PopListBall(List<Ball> balls,float time)
     {
         yield return new WaitForSeconds(time);

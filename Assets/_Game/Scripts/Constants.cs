@@ -21,4 +21,8 @@ public static class Constants
     public static string FireBall = "FireBall";
     public static string Rabbit = "Rabbit";
     public static string CombatText_Point = "CombatText_Point";
+
+    public static string BallonPopEffect = "BalloonPop";
+    public static string FireEffect = "FireEffect";
+    public static string ExplosionEffect = "Explosion";
 }
