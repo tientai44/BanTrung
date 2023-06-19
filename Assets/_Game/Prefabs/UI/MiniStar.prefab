@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 8805856204722924653}
   - component: {fileID: 7206792298971952573}
   - component: {fileID: 6488038886962613512}
-  - component: {fileID: 7567863155440740929}
+  - component: {fileID: 3051160845098714804}
   m_Layer: 5
   m_Name: MiniStar
   m_TagString: Untagged
@@ -145,7 +145,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &7567863155440740929
+--- !u!114 &3051160845098714804
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -154,6 +154,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3018853069605616721}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 700ce92dd7d192c4aa3c6587b69a13e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 9779369c3e629814293c4c1120974518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

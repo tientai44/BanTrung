@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 8265298998684539268}
   - component: {fileID: 2875761237594799320}
   - component: {fileID: 2460845961498682468}
-  - component: {fileID: 2711198558359937960}
   - component: {fileID: 5842805807751972335}
+  - component: {fileID: 657845859724003304}
   m_Layer: 5
   m_Name: Star
   m_TagString: Untagged
@@ -78,18 +78,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2711198558359937960
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7044621222470615829}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 700ce92dd7d192c4aa3c6587b69a13e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &5842805807751972335
 Animator:
   serializedVersion: 5
@@ -111,3 +99,15 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &657845859724003304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7044621222470615829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9779369c3e629814293c4c1120974518, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

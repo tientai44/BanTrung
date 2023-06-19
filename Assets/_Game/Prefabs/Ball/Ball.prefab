@@ -95,8 +95,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4988195444827558587}
   - component: {fileID: 792144862}
-  - component: {fileID: 792144863}
   - component: {fileID: 7659222681228531455}
+  - component: {fileID: 1181128019777529446}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Ball
@@ -141,22 +141,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &792144863
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5294738988299029059}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a67c505bc8fa72499abe8c1f99111fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  tagPool: 
-  color: 3
-  effect: {fileID: 5230804875210663213}
-  state: 0
 --- !u!58 &7659222681228531455
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -173,6 +157,23 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.2
+--- !u!114 &1181128019777529446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5294738988299029059}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce2c1b1d27733c4db636ba69092b81f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tagPool: 
+  color: 3
+  effect: {fileID: 5230804875210663213}
+  elementEffect: {fileID: 0}
+  state: 0
 --- !u!1 &7563664990276068012
 GameObject:
   m_ObjectHideFlags: 0

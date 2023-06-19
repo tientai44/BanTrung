@@ -15,6 +15,14 @@ PrefabInstance:
       propertyPath: tagPool
       value: Bomb
       objectReference: {fileID: 0}
+    - target: {fileID: 1181128019777529446, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: color
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1181128019777529446, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: tagPool
+      value: Bomb
+      objectReference: {fileID: 0}
     - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Sprite
       value: 

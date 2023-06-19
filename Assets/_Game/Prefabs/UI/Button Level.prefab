@@ -374,9 +374,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   txtLevel: {fileID: 8766307288190860080}
   stars:
-  - {fileID: 3672762628773566837}
-  - {fileID: 2732306328249412162}
-  - {fileID: 2707411972057176796}
+  - {fileID: 8190310254305588608}
+  - {fileID: 7402387060862273207}
+  - {fileID: 7404829518548235817}
   LockImg: {fileID: 334385067411888151}
 --- !u!1001 &5518276964610502813
 PrefabInstance:
@@ -499,22 +499,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
---- !u!114 &2707411972057176796 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7567863155440740929, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
-  m_PrefabInstance: {fileID: 5518276964610502813}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 700ce92dd7d192c4aa3c6587b69a13e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &3936273865008323824 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8805856204722924653, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
   m_PrefabInstance: {fileID: 5518276964610502813}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7404829518548235817 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3051160845098714804, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
+  m_PrefabInstance: {fileID: 5518276964610502813}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9779369c3e629814293c4c1120974518, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5543202510830059523
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -636,22 +636,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
---- !u!114 &2732306328249412162 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7567863155440740929, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
-  m_PrefabInstance: {fileID: 5543202510830059523}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 700ce92dd7d192c4aa3c6587b69a13e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &3952408678375205998 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8805856204722924653, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
   m_PrefabInstance: {fileID: 5543202510830059523}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7402387060862273207 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3051160845098714804, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
+  m_PrefabInstance: {fileID: 5543202510830059523}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9779369c3e629814293c4c1120974518, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &6628794350533817140
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -778,14 +778,14 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8805856204722924653, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
   m_PrefabInstance: {fileID: 6628794350533817140}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3672762628773566837 stripped
+--- !u!114 &8190310254305588608 stripped
 MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7567863155440740929, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
+  m_CorrespondingSourceObject: {fileID: 3051160845098714804, guid: 6db5f020a4f59114d98ebd4701b2db92, type: 3}
   m_PrefabInstance: {fileID: 6628794350533817140}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 700ce92dd7d192c4aa3c6587b69a13e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 9779369c3e629814293c4c1120974518, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

@@ -15,6 +15,14 @@ PrefabInstance:
       propertyPath: tagPool
       value: BlueBall
       objectReference: {fileID: 0}
+    - target: {fileID: 1181128019777529446, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: color
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1181128019777529446, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+      propertyPath: tagPool
+      value: BlueBall
+      objectReference: {fileID: 0}
     - target: {fileID: 4434970169086313869, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -95,5 +103,28 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 792144863, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+--- !u!1 &1175531552021398468 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5294738988299029059, guid: 27ffa5e064376b64694846bef8b5e460, type: 3}
+  m_PrefabInstance: {fileID: 6425197104666659207}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4915121042762605908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1175531552021398468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ce2c1b1d27733c4db636ba69092b81f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tagPool: BlueBall
+  color: 2
+  effect: {fileID: 0}
+  elementEffect: {fileID: 0}
+  state: 0
