@@ -78,7 +78,7 @@ public class G4_LevelManager : G4_GOSingleton<G4_LevelManager>
         //BallPool.GetInstance().ClearObjectActive(Constants.GreenBall);
         //BallPool.GetInstance().ClearObjectActive(Constants.Rabbit);
         G4_BallPool.GetInstance().ClearAllObjectActive();
-        G4_Constants.Score = 0;
+        G4_GameController.GetInstance().ResetScore();
         balls.Clear();
         map.Clear();
 

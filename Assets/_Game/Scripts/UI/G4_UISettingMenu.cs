@@ -7,7 +7,7 @@ public class G4_UISettingMenu : G4_UICanvas
     public override void Open()
     {
         base.Open();
-        G4_GameController.GetInstance().State = G4_GameState.Waiting;
+        //G4_GameController.GetInstance().ChangeState(new WaitingState());
     }
     public void ReplayButton()
     {
@@ -23,7 +23,7 @@ public class G4_UISettingMenu : G4_UICanvas
     public void CloseButton()
     {
         Close(0f);
-        G4_GameController.GetInstance().ChangeState(G4_GameState.Playing,0.5f);
+        //G4_GameController.GetInstance().ChangeState(G4_GameState.Playing,0.5f);
     }
     
 }

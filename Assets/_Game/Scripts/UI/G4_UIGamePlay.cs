@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,10 +17,24 @@ public class G4_UIGamePlay : G4_UICanvas
     [SerializeField] private Sprite RescueSprite;
     [SerializeField] private Sprite CollectFlowerSprite;
     private float targetFill;
+    private void OnEnable()
+    {
+        ObserverManager.GetInstance().Register(EventName.ScoreChange, () =>
+        {
+            SetScoreText(G4_GameController.GetInstance().Score);
+        });
+    }
+    private void OnDisable()
+    {
+        ObserverManager.GetInstance()?.Unregister(EventName.ScoreChange, () =>
+        {
+            SetScoreText(G4_GameController.GetInstance().Score);
+        });
+    }
     public override void Open()
     {
         base.Open();
-        SetScoreText(G4_Constants.Score);
+        //SetScoreText(G4_Constants.Score);
         foreach (G4_Star star in stars)
         {
             star.PlayAnim("Disappear");
@@ -92,10 +107,10 @@ public class G4_UIGamePlay : G4_UICanvas
     }
     public void SettingButton()
     {
-        if(G4_GameController.GetInstance().State != G4_GameState.Playing)
-        {
-            return;
-        }
+        //if(G4_GameController.GetInstance().State != G4_GameState.Playing)
+        //{
+        //    return;
+        //}
         G4_UIManager.GetInstance().OpenUI<G4_UISettingMenu>();
     }
     public void SetMissionProcess(string txt)
@@ -117,4 +132,5 @@ public class G4_UIGamePlay : G4_UICanvas
             missionImg.sprite = RescueSprite;
         }
     }
+
 }

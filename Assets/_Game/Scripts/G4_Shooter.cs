@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum ShooterMode
 {
-    Normal,FullColor,Bomb,FireBall
+    Normal, FullColor, Bomb, FireBall
 }
 public class G4_Shooter : G4_GOSingleton<G4_Shooter>
 {
@@ -15,29 +15,32 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
     [SerializeField] private List<G4_Ball> balls;
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private List<Transform> shootPoints;
+    [SerializeField] G4_DotLine dotline;
     public G4_Ball currentBall;
     public G4_Ball prevBall;
     public G4_Ball secondBall;
     public G4_Ball thirdBall;
     private Transform tf;
-    private Vector3 offset = new Vector3 (1.5f,-0.5f,0);
-    private float ballRadius=0.25f;
-    private int countBreakLine=20;
+    private Vector3 offset = new Vector3(1.5f, -0.5f, 0);
+    private int countBreakLine = 20;
     private bool isSwitching = false;
-    private float speedSwitching = 6f;
-    private bool modeTripleBallActive=false;
+    private float speedSwitching = 10f;
+    private bool modeTripleBallActive = false;
     private ShooterMode mode = ShooterMode.Normal;
     public LineRenderer lineRenderer;
-    
-
-    public Transform TF { 
-        get { 
+    private Animator animator;
+    private bool isTutorial;
+    [SerializeField] Transform hand;
+    public Transform TF
+    {
+        get
+        {
             if (tf == null)
             {
                 tf = transform;
             }
-            return tf; 
-        } 
+            return tf;
+        }
     }
 
     public int NumBall { get => numBall; set => numBall = value; }
@@ -46,17 +49,46 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
     private void Awake()
     {
         //lineRenderer = GetComponent<LineRenderer>();
+        animator = GetComponent<Animator>();
     }
     private void Update()
     {
-        if(G4_GameController.GetInstance().State != G4_GameState.Playing || isSwitching)
+        //if (G4_GameController.GetInstance().CurrentState is not PlayingState || isSwitching)
+        //{
+        //    lineRenderer.enabled = false;
+        //    return;
+        //}
+        
+        //if (Input.GetMouseButtonDown(0))
+        //{
+        //    Touch touch = Input.GetTouch(0);
+        //    Vector3 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
+        //    Vector2 direct = touchPosition - TF.position;
+        //    direct /= Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
+        //    Shoot( direct);
+
+        //}
+    }
+    public void Play()
+    {
+        if (isSwitching)
         {
-            lineRenderer.enabled = false;
+            return;
+        }
+        if (isTutorial)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                isTutorial = false;
+                animator.Play("");
+                hand.gameObject.SetActive(false);
+            }
+            TutorialShow();
             return;
         }
         if (currentBall == null)
         {
-            if(mode is not ShooterMode.Normal)
+            if (mode is not ShooterMode.Normal)
             {
                 UnEnableAnyMode();
             }
@@ -67,42 +99,41 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
             Touch touch = Input.GetTouch(0);
             Vector2 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
             Vector2 direct = touchPosition - (Vector2)shootPoints[0].position;
-            if (direct.y >0.5f &&direct.y<5.8f)
+            if (direct.y > 0.5f && direct.y < 5.8f)
             {
                 direct /= Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
-                List<Vector2> destinations = DrawVector(shootPoints[0].position, direct);
+                List<Vector2> destinations = DrawVector(shootPoints[0].position, direct, currentBall.Color);
 
                 if (touch.phase == TouchPhase.Ended /*|| touch.phase == TouchPhase.Canceled*/)
                 {
                     // Xử lý sự kiện thả tay ở đây
                     //Shoot(direct);
                     ShootUpdate(destinations);
+                    dotline.HideDot();
                 }
             }
             else
             {
-                lineRenderer.enabled = false;
+                //lineRenderer.enabled = false;
+                dotline.HideDot();
             }
-            
+
         }
         else
         {
-            lineRenderer.enabled = false;
+            //lineRenderer.enabled = false;
+            dotline.HideDot();
         }
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    Touch touch = Input.GetTouch(0);
-        //    Vector3 touchPosition = Camera.main.ScreenToWorldPoint(touch.position);
-        //    Vector2 direct = touchPosition - TF.position;
-        //    direct /= Mathf.Max(Mathf.Abs(direct.x), Mathf.Abs(direct.y));
-        //    Shoot( direct);
-            
-        //}
+    }
+    public void TutorialShow()
+    {
+
+        DrawVector(shootPoints[0].position, (hand.position - shootPoints[0].position).normalized,currentBall.Color);
     }
     G4_Ball RandomBall()
     {
-        
-        List<int> indexs = new List<int> { 1,2,3};
+
+        List<int> indexs = new List<int> { 1, 2, 3 };
         if (G4_LevelManager.numBallColor[BallColor.Red] == 0)
         {
             indexs.Remove(1);
@@ -115,7 +146,7 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
         {
             indexs.Remove(3);
         }
-        if(indexs.Count == 0)
+        if (indexs.Count == 0)
         {
             indexs = new List<int> { 1, 2, 3 };
         }
@@ -138,7 +169,7 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
     }
     public void OnInit(int numball)
     {
-        
+
         StopAllCoroutines();
         currentBall = null;
         secondBall = null;
@@ -149,21 +180,33 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
         secondBall = RandomBall();
         secondBall.TF.position = shootPoints[1].position;
         StartCoroutine(GetBall());
+        if (G4_LevelManager.CurrentLevel < 4)
+        {
+            isTutorial = true;
+            animator.Play("Drag");
+            hand.gameObject.SetActive(true);
+        }
+        else
+        {
+            isTutorial = false;
+            animator.Play("");
+            hand.gameObject.SetActive(false);
+        }
         G4_UIManager.GetInstance().GetUI<G4_UIGamePlay>().SetNumBall(numBall);
     }
     public void GetBallDirectly()
     {
         StartCoroutine(GetBall(0));
     }
-    public IEnumerator GetBall(float angle=120)
+    public IEnumerator GetBall(float angle = 120)
     {
-        if(numBall == 0) { yield break; }
+        if (numBall == 0) { yield break; }
         if (!modeTripleBallActive)
         {
             //numBall -= 1;
             //UIManager.GetInstance().GetUI<UIGamePlay>().SetNumBall(numBall);
             prevBall = currentBall;
-            if (secondBall !=null &&G4_LevelManager.numBallColor[secondBall.Color] == 0)
+            if (secondBall != null && G4_LevelManager.numBallColor[secondBall.Color] == 0)
             {
                 secondBall.OnInit();
                 G4_BallPool.GetInstance().ReturnToPool(secondBall.tagPool, secondBall.gameObject);
@@ -193,7 +236,7 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
                 secondBall = RandomBall();
                 secondBall.TF.position = shootPoints[1].position;
             }
-            if (thirdBall!=null && G4_LevelManager.numBallColor[thirdBall.Color] == 0)
+            if (thirdBall != null && G4_LevelManager.numBallColor[thirdBall.Color] == 0)
             {
                 thirdBall.OnInit();
                 G4_BallPool.GetInstance().ReturnToPool(thirdBall.tagPool, thirdBall.gameObject);
@@ -201,9 +244,9 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
                 thirdBall.TF.position = shootPoints[2].position;
             }
             currentBall = secondBall;
-            
+
             StartCoroutine(IERotateBall(currentBall, angle, shootPoints[0].position));
-            if(numBall <= 1)
+            if (numBall <= 1)
             {
                 secondBall = null;
                 yield break;
@@ -218,7 +261,7 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
             thirdBall = RandomBall();
             thirdBall.TF.position = shootPoints[2].position;
         }
-       
+
     }
     //public void Shoot(Vector2 direction)
     //{
@@ -234,36 +277,40 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
     //}
     public void ShootUpdate(List<Vector2> destinations)
     {
-       
+        //SoundController.instance.PlayAudioClipByIndex(0);
         if (prevBall != null && prevBall.State is BallState.Moving)
         {
             return;
         }
         if (currentBall.State is not BallState.Moving)//Shoot
         {
-            if (Mode is ShooterMode.Normal) {
+            if (Mode is ShooterMode.Normal)
+            {
                 numBall -= 1;
             }
             G4_UIManager.GetInstance().GetUI<G4_UIGamePlay>().SetNumBall(numBall);
             G4_LevelManager.numBallColor[currentBall.Color] += 1;
             currentBall.Follow(destinations, targetCollider);
             currentBall = null;
-            G4_GameController.GetInstance().ChangeState(G4_GameState.Waiting);
+            G4_GameController.GetInstance().ChangeState(new WaitingState());
             //Invoke(nameof(GetBall), 2f);
         }
     }
-    List<Vector2> DrawVector(Vector3 startPos,Vector3 direction)
+    List<Vector2> DrawVector(Vector3 startPos, Vector3 direction,BallColor ballColor)
     {
         List<Vector2> positions = new List<Vector2>();
-        lineRenderer.enabled = true;
+        //lineRenderer.enabled = true;
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, startPos);
+        List<Vector2> points = new List<Vector2>();
+        points.Add(startPos);
         targetCollider = null;
         //lineRenderer.SetPosition(1, transform.position + direction * 100);
         int i;
-        for( i=0;i<countBreakLine;i++) {
+        for (i = 0; i < countBreakLine; i++)
+        {
             RaycastHit2D hit = Physics2D.CircleCast(startPos, lazeWidth, direction, 100f, wallLayer);
-            if (hit.collider != null && i<countBreakLine-1)
+            if (hit.collider != null && i < countBreakLine - 1)
             {
                 if (mode is not ShooterMode.FireBall)
                 {
@@ -271,14 +318,14 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
                     if (hit.collider.CompareTag("Wall"))
                     {
                         float angle = Vector2.Angle(direction, Vector2.up);
-                        float distanceHeight = ballRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
+                        float distanceHeight = G4_Ball.BallRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
                         if (direction.x > 0)
                         {
-                            hitpoint = hit.point + new Vector2(-ballRadius, -distanceHeight);
+                            hitpoint = hit.point + new Vector2(-G4_Ball.BallRadius, -distanceHeight);
                         }
                         else
                         {
-                            hitpoint = hit.point + new Vector2(ballRadius, -distanceHeight);
+                            hitpoint = hit.point + new Vector2(G4_Ball.BallRadius, -distanceHeight);
                         }
                         startPos = hitpoint;
                         lineRenderer.SetPosition(lineRenderer.positionCount - 1, hitpoint);
@@ -291,14 +338,14 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
                     else if (hit.collider.CompareTag("TopWall"))
                     {
                         float angle = Vector2.Angle(direction, Vector2.right);
-                        float distanceWidth = ballRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
+                        float distanceWidth = G4_Ball.BallRadius / Mathf.Tan(angle * Mathf.Deg2Rad);
                         if (direction.x > 0)
                         {
-                            hitpoint = hit.point + new Vector2(-distanceWidth, -ballRadius);
+                            hitpoint = hit.point + new Vector2(-distanceWidth, -G4_Ball.BallRadius);
                         }
                         else
                         {
-                            hitpoint = hit.point + new Vector2(distanceWidth, -ballRadius);
+                            hitpoint = hit.point + new Vector2(distanceWidth, -G4_Ball.BallRadius);
                         }
                         startPos = hitpoint;
                         lineRenderer.SetPosition(lineRenderer.positionCount - 1, hitpoint);
@@ -326,17 +373,23 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
             }
             else
             {
-                lineRenderer.SetPosition(lineRenderer.positionCount-1, transform.position + direction * 100);
+                lineRenderer.SetPosition(lineRenderer.positionCount - 1, transform.position + direction * 100);
                 positions.Add(transform.position + direction * 100);
                 break;
             }
         }
+        
+        for(i=0; i<positions.Count; i++)
+        {
+            points.Add(positions[i]);
+        }
+        dotline.DrawManyLine(points,ballColor);
         return positions;
     }
-   
+
     public void ClearBall()
     {
-        StartCoroutine(IEClearBall(Time.deltaTime*20));
+        StartCoroutine(IEClearBall(Time.deltaTime * 20));
     }
 
     public IEnumerator IEClearBall(float time)
@@ -351,12 +404,12 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
             G4_UIManager.GetInstance().GetUI<G4_UIGamePlay>().SetNumBall(numBall);
             yield return new WaitForSeconds(time);
         }
-        
+
     }
 
     public void SwitchBall()
     {
-        if(isSwitching||secondBall ==null||currentBall==null)
+        if (isSwitching || secondBall == null || currentBall == null || mode != ShooterMode.Normal)
         {
             return;
         }
@@ -380,11 +433,11 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
         }
     }
 
-    IEnumerator IERotateBall(G4_Ball b,float angle,Vector3 target)
+    IEnumerator IERotateBall(G4_Ball b, float angle, Vector3 target)
     {
         isSwitching = true;
         float temp = 0;
-        while(temp<angle)
+        while (temp < angle)
         {
             float nextAngle = angle * Time.deltaTime * speedSwitching;
             temp += nextAngle;
@@ -396,9 +449,9 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
             yield return new WaitForSeconds(Time.deltaTime);
         }
         b.TF.position = target;
-        isSwitching=false;
+        isSwitching = false;
     }
-    
+
     public void EnableTripleMode()
     {
         if (modeTripleBallActive)
@@ -409,7 +462,7 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
         thirdBall = RandomBall();
         thirdBall.TF.position = shootPoints[2].position;
     }
- 
+
     public void EnableMode(ShooterMode shooterMode)
     {
         if (mode is not ShooterMode.Normal || currentBall == null)
@@ -419,12 +472,15 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
         mode = shooterMode;
         tempBall = currentBall;
         tempBall.gameObject.SetActive(false);
-        secondBall.gameObject.SetActive(false);
+        if (secondBall != null)
+        {
+            secondBall.gameObject.SetActive(false);
+        }
         if (thirdBall != null)
         {
             thirdBall.gameObject.SetActive(false);
         }
-        if(mode is ShooterMode.FullColor)
+        if (mode is ShooterMode.FullColor)
             currentBall = G4_BallPool.GetInstance().GetFromPool(G4_Constants.FullColorBall, shootPoints[0].position).GetComponent<G4_Ball>();
         if (mode is ShooterMode.Bomb)
             currentBall = G4_BallPool.GetInstance().GetFromPool(G4_Constants.Bomb, shootPoints[0].position).GetComponent<G4_Ball>();
@@ -434,13 +490,13 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
     }
     public void UnEnableAnyMode()
     {
-        if(mode is ShooterMode.Normal)
+        if (mode is ShooterMode.Normal)
         {
             return;
         }
         Debug.Log("unable");
         mode = ShooterMode.Normal;
-        currentBall = tempBall; 
+        currentBall = tempBall;
         currentBall.gameObject.SetActive(true);
         secondBall.gameObject.SetActive(true);
         if (thirdBall != null)
@@ -448,5 +504,5 @@ public class G4_Shooter : G4_GOSingleton<G4_Shooter>
             thirdBall.gameObject.SetActive(true);
         }
     }
-    
+
 }

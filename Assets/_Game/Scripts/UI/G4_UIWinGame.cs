@@ -16,7 +16,7 @@ public class G4_UIWinGame : G4_UICanvas
     {
         base.Open();
         SetLevelText(G4_LevelManager.CurrentLevel);
-        SetScoreText(G4_Constants.Score);
+        //SetScoreText(G4_Constants.Score);
     }
 
     private void Update()

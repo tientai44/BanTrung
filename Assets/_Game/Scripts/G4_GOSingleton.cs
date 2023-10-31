@@ -10,13 +10,13 @@ public class G4_GOSingleton<T> : MonoBehaviour where T : Component
         if (Instance == null)
         {
             Instance = GameObject.FindObjectOfType<T>();
-            if (Instance == null)
-            {
-                GameObject gameObject = new GameObject();
+            //if (Instance == null)
+            //{
+            //    GameObject gameObject = new GameObject();
 
-                Instance = gameObject.AddComponent<T>();
-            }
-            DontDestroyOnLoad(Instance.gameObject);
+            //    Instance = gameObject.AddComponent<T>();
+            //}
+            //DontDestroyOnLoad(Instance.gameObject);
         }
         return Instance;
 

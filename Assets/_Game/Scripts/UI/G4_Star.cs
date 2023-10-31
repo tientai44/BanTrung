@@ -4,13 +4,9 @@ using UnityEngine;
 
 public class G4_Star : MonoBehaviour
 {
-    Animator animator;
+    [SerializeField]Animator animator;
 
-    private void Awake()
-    {
-        animator = GetComponent<Animator>();
-    }
-
+  
     public void PlayAnim(string animName)
     {
         animator.Play(animName);

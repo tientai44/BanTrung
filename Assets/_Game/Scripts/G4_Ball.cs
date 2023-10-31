@@ -223,11 +223,13 @@ public class G4_Ball : MonoBehaviour
         G4_BallPool.GetInstance().ReturnToPool(G4_Constants.BallonPopEffect, effect.gameObject,0.5f);
         G4_BallPool.GetInstance().ReturnToPool(tagPool,gameObject);
 
-        G4_Constants.Score += point;
         G4_CombatText cbt = G4_BallPool.GetInstance().GetFromPool(G4_Constants.CombatText_Point, TF.position).GetComponent<G4_CombatText>();
         cbt.SetText(point.ToString());
         G4_BallPool.GetInstance().ReturnToPool(G4_Constants.CombatText_Point, cbt.gameObject,0.5f);
-        G4_UIManager.GetInstance().GetUI<G4_UIGamePlay>().SetScoreText(G4_Constants.Score);
+        //G4_Constants.Score += point;
+
+        //G4_UIManager.GetInstance().GetUI<G4_UIGamePlay>().SetScoreText(G4_Constants.Score);
+        G4_GameController.GetInstance().UpScore(point);
 
     }
   

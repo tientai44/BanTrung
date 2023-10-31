@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,10 +8,17 @@ using UnityEngine.UI;
 public class G4_ButtonLevel : MonoBehaviour
 {
     Button btn;
-    [SerializeField] Text txtLevel;
+    [SerializeField] Image buttonImg;
+    [SerializeField] int level;
+    [SerializeField] TextMeshProUGUI txtLevel;
     [SerializeField] List<G4_Star> stars;
-    [SerializeField] Image LockImg;
+    [SerializeField] Sprite LockSprite;
+    [SerializeField] Sprite UnLockSprite;
     private bool isLock = true;
+    private void OnEnable()
+    {
+        SetUp(level);
+    }
     public void SetUp(int lv)
     {
         btn = GetComponent<Button>();
@@ -22,10 +30,10 @@ public class G4_ButtonLevel : MonoBehaviour
             {
                 star.gameObject.SetActive(false);
             }
-            LockImg.gameObject.SetActive(true);
+            buttonImg.sprite=LockSprite;
             return; 
         }
-        LockImg.gameObject.SetActive(false);
+        buttonImg.sprite = UnLockSprite;
         foreach (G4_Star star in stars)
         {
             star.gameObject.SetActive(true);
