@@ -772,6 +772,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsDestroyOnClose: 0
+  btnSound: {fileID: 4625155407286403797}
+  btnMusic: {fileID: 2692786174948761488}
 --- !u!1 &6474863984979039019
 GameObject:
   m_ObjectHideFlags: 0
@@ -1383,8 +1385,9 @@ GameObject:
   - component: {fileID: 1349508259120234987}
   - component: {fileID: 1277832273851021550}
   - component: {fileID: 883837289770664751}
+  - component: {fileID: 4625155407286403797}
   m_Layer: 5
-  m_Name: EffectSound
+  m_Name: BtnSound
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1493,6 +1496,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4625155407286403797
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8485312729464993382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdd6ecae8dccd124bbae1e059bf769f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteOn: {fileID: 21300000, guid: a8a23ce10458443a3b631dd71676a382, type: 3}
+  spriteOff: {fileID: 21300000, guid: d3e69f21f3e894e0f896d9e798ac3dde, type: 3}
 --- !u!1 &8508634153643377937
 GameObject:
   m_ObjectHideFlags: 0
@@ -1505,8 +1522,9 @@ GameObject:
   - component: {fileID: 4818770001296827278}
   - component: {fileID: 8702555926375265582}
   - component: {fileID: 8854043504750635566}
+  - component: {fileID: 2692786174948761488}
   m_Layer: 5
-  m_Name: BGMusic
+  m_Name: BtnMusic
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1615,6 +1633,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &2692786174948761488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8508634153643377937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fdd6ecae8dccd124bbae1e059bf769f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spriteOn: {fileID: 21300000, guid: 420317a324af54abbbb0f26b5b26c565, type: 3}
+  spriteOff: {fileID: 21300000, guid: 5ace2b13e689a472fb4cc3949bf7bb53, type: 3}
 --- !u!1 &8730118648959488224
 GameObject:
   m_ObjectHideFlags: 0

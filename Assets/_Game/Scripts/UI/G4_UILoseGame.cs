@@ -15,6 +15,8 @@ public class G4_UILoseGame : G4_UICanvas
     {
         base.Open();
         SetLevelText(G4_LevelManager.CurrentLevel);
+        G4_SoundManager.GetInstance().PlayOneShot(SoundFX.Lose);
+
         //SetScoreText(G4_Constants.Score);
     }
     private void Update()

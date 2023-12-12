@@ -37,10 +37,10 @@ public class G4_GameController : G4_GOSingleton<G4_GameController>
         intialPos_BallZone = BallZone.position;
         G4_BallPool.GetInstance().OnInit();
         G4_SaveLoadManager.GetInstance().OnInit();
+        ObserverManager.GetInstance().OnInit();
         ResetScore();
         //ChooseLevel(3);
         G4_UIManager.GetInstance().OpenUI<G4_UIMainMenu>();
-   
     }
     private void FixedUpdate()
     {
@@ -49,7 +49,7 @@ public class G4_GameController : G4_GOSingleton<G4_GameController>
     }
     public void FixBallZone()
     {
-        if (Vector3.Distance(BallZone.position, target) <= 0.1f && isLoadDone == false)
+        if (Vector3.Distance(BallZone.position, target) <= .001f && isLoadDone == false)
         {
             isLoadDone = true;
             ChangeState(new PlayingState());
@@ -122,7 +122,7 @@ public class G4_GameController : G4_GOSingleton<G4_GameController>
         yield return StartCoroutine(G4_LevelManager.GetInstance().FallAllBall(Time.deltaTime));
         yield return StartCoroutine(G4_Shooter.GetInstance().IEClearBall(Time.deltaTime));
         yield return new WaitForSeconds(2f);
-        G4_UIManager.GetInstance().OpenUI<G4_UIWinGame>();
+        G4_UIManager.GetInstance().OpenUI<G4_UIWinGame>().SetScoreText(Score);
         int lv = G4_LevelManager.CurrentLevel;
         if (G4_SaveLoadManager.GetInstance().Data1.CurrentLv <= lv)
         {
@@ -162,6 +162,6 @@ public class G4_GameController : G4_GOSingleton<G4_GameController>
         //Shooter.GetInstance().ClearBall();
         yield return StartCoroutine(G4_Shooter.GetInstance().IEClearBall(Time.deltaTime));
         yield return new WaitForSeconds(2f);
-        G4_UIManager.GetInstance().OpenUI<G4_UILoseGame>();
+        G4_UIManager.GetInstance().OpenUI<G4_UILoseGame>().SetScoreText(Score);
     }
 }

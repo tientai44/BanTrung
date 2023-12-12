@@ -230,7 +230,7 @@ public class G4_Ball : MonoBehaviour
 
         //G4_UIManager.GetInstance().GetUI<G4_UIGamePlay>().SetScoreText(G4_Constants.Score);
         G4_GameController.GetInstance().UpScore(point);
-
+        G4_SoundManager.GetInstance().PlayOneShot(SoundFX.PopBall);
     }
   
    
@@ -498,7 +498,7 @@ public class G4_Ball : MonoBehaviour
             if(state is BallState.Moving)
             {
                 PopBall(0);
-                G4_GameController.GetInstance().State = G4_GameState.Playing;
+                G4_GameController.GetInstance().ChangeState(new PlayingState());
             }
         }
 

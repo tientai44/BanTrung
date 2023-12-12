@@ -15,6 +15,7 @@ public class G4_UIWinGame : G4_UICanvas
     public override void Open()
     {
         base.Open();
+        G4_SoundManager.GetInstance().PlayOneShot(SoundFX.Win);
         SetLevelText(G4_LevelManager.CurrentLevel);
         //SetScoreText(G4_Constants.Score);
     }

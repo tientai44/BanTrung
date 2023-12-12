@@ -10,10 +10,7 @@ public enum EventName
 public class ObserverManager : G4_GOSingleton<ObserverManager>
 {
     List<Observer> observers = new List<Observer>();
-    private void Awake()
-    {
-        OnInit();
-    }
+
     public void OnInit()
     {
         Observer scoreChangeObserver = new SimpleObserver();
